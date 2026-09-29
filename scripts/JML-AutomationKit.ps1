@@ -137,7 +137,7 @@ function Test-AppAssignment {
     }
 }
 
-function Ensure-GroupMember {
+function Add-GroupMember {
     param([string]$GroupName, [string]$UserId)
     $g = Find-GroupExact -Name $GroupName
     if (-not $g) {
@@ -156,7 +156,7 @@ function Ensure-GroupMember {
     }
 }
 
-function Ensure-AppAssigned {
+function Add-AppAssignment {
     param([string]$AppLabel, [string]$UserId)
     $a = Find-AppExact -Label $AppLabel
     if (-not $a) {
@@ -254,8 +254,8 @@ foreach ($r in $csvRows) {
         if ($user) {
             Sync-UserProfile -User $user -Row $r -Email $email
             $uid = [string]$user.id
-            foreach ($gn in $desiredGroups) { Ensure-GroupMember -GroupName $gn -UserId $uid }
-            foreach ($an in $desiredApps) { Ensure-AppAssigned -AppLabel $an -UserId $uid }
+            foreach ($gn in $desiredGroups) { Add-GroupMember -GroupName $gn -UserId $uid }
+            foreach ($an in $desiredApps) { Add-AppAssignment -AppLabel $an -UserId $uid }
         }
     } elseif ($Mode -eq 'mover') {
         if (-not $user) {
@@ -263,8 +263,8 @@ foreach ($r in $csvRows) {
         } else {
             Sync-UserProfile -User $user -Row $r -Email $email
             $uid = [string]$user.id
-            foreach ($gn in $desiredGroups) { Ensure-GroupMember -GroupName $gn -UserId $uid }
-            foreach ($an in $desiredApps) { Ensure-AppAssigned -AppLabel $an -UserId $uid }
+            foreach ($gn in $desiredGroups) { Add-GroupMember -GroupName $gn -UserId $uid }
+            foreach ($an in $desiredApps) { Add-AppAssignment -AppLabel $an -UserId $uid }
 
             $currentGroups = @(Invoke-OktaPagedGet -Client $client -Path "/api/v1/users/$uid/groups")
             foreach ($cg in $currentGroups) {

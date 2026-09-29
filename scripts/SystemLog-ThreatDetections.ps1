@@ -106,8 +106,8 @@ function Get-HaversineKm {
 }
 
 function Get-GeoPoint {
-    param($Event)
-    $g = $Event.client.geographicalContext.geolocation
+    param($LogEvent)
+    $g = $LogEvent.client.geographicalContext.geolocation
     if ($null -eq $g) { return $null }
     if ($null -eq $g.lat -or $null -eq $g.lon) { return $null }
     return [pscustomobject]@{
@@ -119,15 +119,15 @@ function Get-GeoPoint {
 }
 
 function Get-EventLogin {
-    param($Event)
-    $login = [string]$Event.actor.alternateId
-    if (-not $login) { $login = [string]$Event.actor.id }
+    param($LogEvent)
+    $login = [string]$LogEvent.actor.alternateId
+    if (-not $login) { $login = [string]$LogEvent.actor.id }
     return $login
 }
 
 function Get-SessionId {
-    param($Event)
-    $t0 = @($Event.target)[0]
+    param($LogEvent)
+    $t0 = @($LogEvent.target)[0]
     if ($null -eq $t0) { return "" }
     return [string]$t0.id
 }
@@ -168,7 +168,7 @@ foreach ($login in $byUser.Keys) {
         $t2 = [datetime]$cur.published
         $hours = ($t2 - $t1).TotalHours
         if ($hours -le 0) { continue }
-        $km = Get-HaversineKm $g1.Lat $g1.Lon $g2.Lat $g2.Lon
+        $km = Get-HaversineKm -Lat1 $g1.Lat -Lon1 $g1.Lon -Lat2 $g2.Lat -Lon2 $g2.Lon
         $speed = $km / $hours
         if ($speed -gt $MaxSpeed) {
             $detail = "{0} -> {1}: {2:N0} km in {3:N1}h (implied {4:N0} km/h, limit {5:N0})" -f $g1.City, $g2.City, $km, $hours, $speed, $MaxSpeed
@@ -259,7 +259,7 @@ foreach ($sid in $bySession.Keys) {
     $maxDist = 0.0
     for ($i = 0; $i -lt $geos.Count; $i++) {
         for ($j = $i + 1; $j -lt $geos.Count; $j++) {
-            $d = Get-HaversineKm $geos[$i].Lat $geos[$i].Lon $geos[$j].Lat $geos[$j].Lon
+            $d = Get-HaversineKm -Lat1 $geos[$i].Lat -Lon1 $geos[$i].Lon -Lat2 $geos[$j].Lat -Lon2 $geos[$j].Lon
             if ($d -gt $maxDist) { $maxDist = $d }
         }
     }
@@ -287,7 +287,7 @@ foreach ($login in $byUser.Keys) {
             if ($sk -eq $si) { continue }
             $gk = Get-GeoPoint $list[$k]
             if ($null -eq $gk) { continue }
-            $d = Get-HaversineKm $gi.Lat $gi.Lon $gk.Lat $gk.Lon
+            $d = Get-HaversineKm -Lat1 $gi.Lat -Lon1 $gi.Lon -Lat2 $gk.Lat -Lon2 $gk.Lon
             if ($d -gt $MinDistanceKm) {
                 $detail = "Sessions {0} and {1} active {2:N0} km apart within {3} minutes ({4} / {5})" -f $si, $sk, $d, $ConcurrencyWindowMinutes, $gi.City, $gk.City
                 Add-Finding -Time $tK -User $login -Type "ConcurrentDistantSessions" -Detail $detail -Severity "Medium"

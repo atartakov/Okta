@@ -129,7 +129,7 @@ function Get-ChangedPaths {
             if ($Old.Contains($k)) { $ov = $Old[$k] }
             $nv = $null
             if ($New.Contains($k)) { $nv = $New[$k] }
-            foreach ($d in (Get-ChangedPaths $ov $nv $p)) { [void]$diffs.Add($d) }
+            foreach ($d in (Get-ChangedPaths -Old $ov -New $nv -Path $p)) { [void]$diffs.Add($d) }
         }
         return @($diffs)
     }
@@ -143,7 +143,7 @@ function Get-ChangedPaths {
         }
         $n = [Math]::Min($oa.Count, $na.Count)
         for ($i = 0; $i -lt $n; $i++) {
-            foreach ($d in (Get-ChangedPaths $oa[$i] $na[$i] "$Path[$i]")) { [void]$diffs.Add($d) }
+            foreach ($d in (Get-ChangedPaths -Old $oa[$i] -New $na[$i] -Path "$Path[$i]")) { [void]$diffs.Add($d) }
         }
         return @($diffs)
     }
@@ -303,7 +303,7 @@ if ($Diff) {
                 $oldJson = $oldMap[$k] | ConvertTo-Json -Depth 30 -Compress
                 $newJson = $newMap[$k] | ConvertTo-Json -Depth 30 -Compress
                 if ($oldJson -ne $newJson) {
-                    $paths = @(Get-ChangedPaths $oldMap[$k] $newMap[$k] "")
+                    $paths = @(Get-ChangedPaths -Old $oldMap[$k] -New $newMap[$k] -Path "")
                     [void]$changed.Add([pscustomobject]@{ Key = $k; Label = $newLabel[$k]; Changes = $paths })
                 }
             }

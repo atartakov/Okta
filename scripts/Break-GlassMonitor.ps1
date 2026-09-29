@@ -75,13 +75,13 @@ function Get-UtcIso8601 {
 }
 
 function New-BreakGlassRow {
-    param($Event, [string]$Login)
+    param($LogEvent, [string]$Login)
     $ip = ""
     $city = ""
     $country = ""
-    if ($Event.client) {
-        if ($Event.client.ipAddress) { $ip = [string]$Event.client.ipAddress }
-        $geo = $Event.client.geographicalContext
+    if ($LogEvent.client) {
+        if ($LogEvent.client.ipAddress) { $ip = [string]$LogEvent.client.ipAddress }
+        $geo = $LogEvent.client.geographicalContext
         if ($geo) {
             if ($geo.city) { $city = [string]$geo.city }
             if ($geo.country) { $country = [string]$geo.country }
@@ -93,10 +93,10 @@ function New-BreakGlassRow {
     $location = $locParts -join ", "
 
     $result = "UNKNOWN"
-    if ($Event.eventType -eq "user.session.start") {
+    if ($LogEvent.eventType -eq "user.session.start") {
         $result = "SUCCESS"
-    } elseif ($Event.eventType -eq "policy.evaluate_sign_on") {
-        if ($Event.outcome -and $Event.outcome.result -eq "FAILURE") {
+    } elseif ($LogEvent.eventType -eq "policy.evaluate_sign_on") {
+        if ($LogEvent.outcome -and $LogEvent.outcome.result -eq "FAILURE") {
             $result = "FAILED"
         } else {
             $result = "POLICY_OK"
@@ -104,12 +104,12 @@ function New-BreakGlassRow {
     }
 
     return [pscustomobject]@{
-        Time     = [string]$Event.published
+        Time     = [string]$LogEvent.published
         Account  = $Login
         Result   = $result
         IP       = $ip
         Location = $location
-        Event    = [string]$Event.eventType
+        Event    = [string]$LogEvent.eventType
     }
 }
 
