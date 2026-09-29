@@ -42,10 +42,11 @@ class OktaClient:
         })
 
     def _request(self, method: str, path: str, params: dict | None = None,
-                 retries: int = 5):
+                 data: dict | None = None, retries: int = 5):
         for _ in range(retries):
             resp = self.session.request(method, self.base_url + path,
-                                        params=params, timeout=DEFAULT_TIMEOUT)
+                                        params=params, json=data,
+                                        timeout=DEFAULT_TIMEOUT)
             if resp.status_code == 429:
                 # Honor Okta's rate-limit reset header, then retry.
                 wait = int(resp.headers.get("x-rate-limit-reset", "5"))
@@ -80,6 +81,20 @@ class OktaClient:
                 yield item
             next_url = resp.links.get("next", {}).get("url")
 
+    # ---- write verbs (for provisioning kits; always gated behind explicit
+    # --apply / --confirm flags in the scripts that use them) ----
+
+    def post(self, path: str, data: dict | None = None) -> dict:
+        resp = self._request("POST", path, data=data)
+        return resp.json() if resp.text else {}
+
+    def put(self, path: str, data: dict | None = None) -> dict:
+        resp = self._request("PUT", path, data=data)
+        return resp.json() if resp.text else {}
+
+    def delete(self, path: str) -> None:
+        self._request("DELETE", path)
+
     # ---- convenience wrappers ----
 
     def list_users(self, status: str = "ACTIVE"):
@@ -88,5 +103,55 @@ class OktaClient:
             params["filter"] = f'status eq "{status}"'
         return self.paged_get("/api/v1/users", params)
 
+    def get_user_by_login(self, login: str) -> dict | None:
+        """Return the first user matching a login, or None."""
+        for u in self.paged_get("/api/v1/users",
+                                {"filter": f'profile.login eq "{login}"', "limit": 2}):
+            return u
+        return None
+
     def list_factors(self, user_id: str) -> list:
         return list(self.paged_get(f"/api/v1/users/{user_id}/factors"))
+
+    def list_logs(self, filter: str | None = None, since: str | None = None):
+        """Iterate System Log events. `since` is an ISO8601 UTC timestamp."""
+        params = {}
+        if filter:
+            params["filter"] = filter
+        if since:
+            params["since"] = since
+        params["sortOrder"] = "ASCENDING"
+        return self.paged_get("/api/v1/logs", params)
+
+    def list_policies(self, policy_type: str):
+        return self.paged_get("/api/v1/policies", {"type": policy_type})
+
+    def list_policy_rules(self, policy_id: str):
+        return self.paged_get(f"/api/v1/policies/{policy_id}/rules")
+
+    def list_zones(self):
+        return self.paged_get("/api/v1/zones")
+
+    def list_apps(self):
+        return self.paged_get("/api/v1/apps")
+
+    def list_app_users(self, app_id: str):
+        return self.paged_get(f"/api/v1/apps/{app_id}/users")
+
+    def list_groups(self, query: str | None = None):
+        params = {}
+        if query:
+            params["q"] = query
+        return self.paged_get("/api/v1/groups", params)
+
+    def list_roles(self):
+        return self.paged_get("/api/v1/roles")
+
+    def list_user_roles(self, user_id: str):
+        return self.paged_get(f"/api/v1/users/{user_id}/roles")
+
+    def list_group_roles(self, group_id: str):
+        return self.paged_get(f"/api/v1/groups/{group_id}/roles")
+
+    def list_auth_servers(self):
+        return self.paged_get("/api/v1/authorizationServers")
