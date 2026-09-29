@@ -30,15 +30,15 @@
     used, otherwise table text.
 
 .EXAMPLE
-    pwsh ./Sign-OnPolicyLinter.ps1
+    pwsh ./sign_on_policy_linter.ps1
     Lints all sign-on policies and prints the findings table.
 
 .EXAMPLE
-    pwsh ./Sign-OnPolicyLinter.ps1 -Limit 5 -Json -Output findings.json
+    pwsh ./sign_on_policy_linter.ps1 -Limit 5 -Json -Output findings.json
     Lints up to 5 policies and writes the findings as JSON to findings.json.
 
 .EXAMPLE
-    pwsh ./Sign-OnPolicyLinter.ps1 -MinZonePrefix 24 -Output linter.txt
+    pwsh ./sign_on_policy_linter.ps1 -MinZonePrefix 24 -Output linter.txt
     Flags zone gateways broader than /24 and writes the table to linter.txt.
 #>
 

@@ -42,17 +42,17 @@
     Write the report to this file path (JSON with -Json, CSV otherwise).
 
 .EXAMPLE
-    .\JML-AutomationKit.ps1 -Mode joiner -Csv .\new-hires.csv
+    .\jml_automation_kit.ps1 -Mode joiner -Csv .\new-hires.csv
 
     Dry run: report what creating/updating the new hires would change.
 
 .EXAMPLE
-    .\JML-AutomationKit.ps1 -Mode mover -Csv .\transfers.csv -Apply -Prune
+    .\jml_automation_kit.ps1 -Mode mover -Csv .\transfers.csv -Apply -Prune
 
     Apply a mover: update profiles, add missing memberships, prune extras.
 
 .EXAMPLE
-    .\JML-AutomationKit.ps1 -Mode leaver -Csv .\exits.csv -Apply -Json -Output .\leaver-report.json
+    .\jml_automation_kit.ps1 -Mode leaver -Csv .\exits.csv -Apply -Json -Output .\leaver-report.json
 
     Deactivate exiting users and write a JSON report of remaining assignments.
 #>

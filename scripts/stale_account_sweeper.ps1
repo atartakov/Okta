@@ -33,15 +33,15 @@
     Write the report to the given file path. CSV by default, JSON with -Json.
 
 .EXAMPLE
-    pwsh ./Stale-AccountSweeper.ps1 -Days 90
+    pwsh ./stale_account_sweeper.ps1 -Days 90
     Reports dormant ACTIVE users without changing anything (dry run).
 
 .EXAMPLE
-    pwsh ./Stale-AccountSweeper.ps1 -Days 180 -Limit 10
+    pwsh ./stale_account_sweeper.ps1 -Days 180 -Limit 10
     Dry-run report of up to 10 users dormant for 180+ days.
 
 .EXAMPLE
-    pwsh ./Stale-AccountSweeper.ps1 -Days 90 -Disable -Confirm -Output sweep.csv
+    pwsh ./stale_account_sweeper.ps1 -Days 90 -Disable -Confirm -Output sweep.csv
     Deactivates dormant accounts and writes the CSV report to sweep.csv.
 #>
 

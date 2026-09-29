@@ -29,17 +29,17 @@
     Write the report to this file path (JSON with -Json, CSV otherwise).
 
 .EXAMPLE
-    .\Admin-PrivilegeReviewer.ps1
+    .\admin_privilege_reviewer.ps1
 
     Review all admin privilege holders with the default 180-day staleness window.
 
 .EXAMPLE
-    .\Admin-PrivilegeReviewer.ps1 -StaleDays 90 -Json -Output .\privilege-review.json
+    .\admin_privilege_reviewer.ps1 -StaleDays 90 -Json -Output .\privilege-review.json
 
     Review with a 90-day staleness window and write a JSON report to file.
 
 .EXAMPLE
-    .\Admin-PrivilegeReviewer.ps1 -Output .\privilege-review.csv
+    .\admin_privilege_reviewer.ps1 -Output .\privilege-review.csv
 
     Review and save a CSV report while still printing the table to the console.
 #>

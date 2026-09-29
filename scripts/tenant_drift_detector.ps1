@@ -51,15 +51,15 @@
     Write the report to this file path as well as displaying it.
 
 .EXAMPLE
-    .\Tenant-DriftDetector.ps1 -Snapshot
+    .\tenant_drift_detector.ps1 -Snapshot
     Capture the current tenant configuration to snapshots/.
 
 .EXAMPLE
-    .\Tenant-DriftDetector.ps1 -Diff .\snapshots\dev-123456-20260901-000000.json .\snapshots\dev-123456-20260928-000000.json
+    .\tenant_drift_detector.ps1 -Diff .\snapshots\dev-123456-20260901-000000.json .\snapshots\dev-123456-20260928-000000.json
     Show what changed between two snapshots.
 
 .EXAMPLE
-    .\Tenant-DriftDetector.ps1 -List
+    .\tenant_drift_detector.ps1 -List
     List captured snapshots with timestamps.
 #>
 

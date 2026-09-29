@@ -49,15 +49,15 @@
     (paths + rollup) with -Json.
 
 .EXAMPLE
-    pwsh ./Get-PrivilegePath.ps1
+    pwsh ./get_privilege_path.ps1
     Full privilege-path map for every ACTIVE user, scariest rows first.
 
 .EXAMPLE
-    pwsh ./Get-PrivilegePath.ps1 -DormantDays 30 -Limit 25
+    pwsh ./get_privilege_path.ps1 -DormantDays 30 -Limit 25
     Trial run over 25 users with a 30-day dormancy threshold.
 
 .EXAMPLE
-    pwsh ./Get-PrivilegePath.ps1 -Json -Output privilege-paths.json
+    pwsh ./get_privilege_path.ps1 -Json -Output privilege-paths.json
     Writes the JSON report (paths + rollup + feeding rules) to a file.
 #>
 

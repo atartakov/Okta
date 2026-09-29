@@ -47,16 +47,16 @@
     (per-app packs and _SUMMARY.csv) are written either way.
 
 .EXAMPLE
-    pwsh ./New-AccessReviewPack.ps1
+    pwsh ./new_access_review_pack.ps1
     Builds the full review pack into ./review-packs-20260928/ and prints the
     risk-sorted rollup table.
 
 .EXAMPLE
-    pwsh ./New-AccessReviewPack.ps1 -DormantDays 60 -OutputDir ./q3-review
+    pwsh ./new_access_review_pack.ps1 -DormantDays 60 -OutputDir ./q3-review
     Flags anything idle 60+ days and writes the pack into ./q3-review/.
 
 .EXAMPLE
-    pwsh ./New-AccessReviewPack.ps1 -Limit 5 -Json
+    pwsh ./new_access_review_pack.ps1 -Limit 5 -Json
     Writes at most 5 rows per app CSV and prints the rollup as JSON.
 #>
 
@@ -214,7 +214,7 @@ Everything here is read-only evidence -- generating it changed nothing.
 
 ## The quarterly review cycle
 
-1. **Generate the pack.** Run `pwsh ./New-AccessReviewPack.ps1`. A new
+1. **Generate the pack.** Run `pwsh ./new_access_review_pack.ps1`. A new
    `review-packs-<date>/` folder appears with one CSV per app.
 2. **Start with the rollup.** Open `_SUMMARY.csv`. It is sorted by RiskScore,
    so the riskiest apps are at the top. Assign each app's CSV to its owner --

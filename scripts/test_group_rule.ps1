@@ -44,19 +44,19 @@
     used, otherwise CSV.
 
 .EXAMPLE
-    pwsh ./Test-GroupRule.ps1
+    pwsh ./test_group_rule.ps1
     Audits all group rules and prints the findings table.
 
 .EXAMPLE
-    pwsh ./Test-GroupRule.ps1 -ImpactPreview
+    pwsh ./test_group_rule.ps1 -ImpactPreview
     Adds the MembersAtRisk column and orders by blast radius.
 
 .EXAMPLE
-    pwsh ./Test-GroupRule.ps1 -Json -Output rules.json
+    pwsh ./test_group_rule.ps1 -Json -Output rules.json
     Writes the audit report as JSON to rules.json.
 
 .EXAMPLE
-    pwsh ./Test-GroupRule.ps1 -Limit 25 -Output rules.csv
+    pwsh ./test_group_rule.ps1 -Limit 25 -Output rules.csv
     Audits up to 25 rules and writes the CSV report to rules.csv.
 #>
 

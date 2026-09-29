@@ -39,17 +39,17 @@
     In -Watch mode, new rows are appended as they arrive (JSON Lines for -Json).
 
 .EXAMPLE
-    .\Break-GlassMonitor.ps1 -Accounts "bg-admin1,bg-admin2"
+    .\break_glass_monitor.ps1 -Accounts "bg-admin1,bg-admin2"
 
     One-shot scan of the last 24 hours for the two break-glass accounts.
 
 .EXAMPLE
-    .\Break-GlassMonitor.ps1 -Accounts "bg-admin1" -Watch -Interval 60 -Output .\bg-events.csv
+    .\break_glass_monitor.ps1 -Accounts "bg-admin1" -Watch -Interval 60 -Output .\bg-events.csv
 
     Watch mode: poll every 60 seconds and append new events to bg-events.csv.
 
 .EXAMPLE
-    .\Break-GlassMonitor.ps1 -Accounts "bg-admin1,bg-admin2" -LookbackHours 72 -Json -Output .\bg-report.json
+    .\break_glass_monitor.ps1 -Accounts "bg-admin1,bg-admin2" -LookbackHours 72 -Json -Output .\bg-report.json
 
     Scan the last 72 hours and write a JSON report to bg-report.json.
 #>

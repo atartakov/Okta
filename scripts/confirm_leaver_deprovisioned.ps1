@@ -50,16 +50,16 @@
     Cap the evidence items shown per check. 0 (default) = show all.
 
 .EXAMPLE
-    pwsh ./Confirm-LeaverDeprovisioned.ps1 -Login jdoe@example.com
+    pwsh ./confirm_leaver_deprovisioned.ps1 -Login jdoe@example.com
     Runs the seven checks and prints a PASS/FAIL/WARN table. Exits 0 only
     when every check passes.
 
 .EXAMPLE
-    pwsh ./Confirm-LeaverDeprovisioned.ps1 -Login jdoe@example.com -Json -Output leaver.json
+    pwsh ./confirm_leaver_deprovisioned.ps1 -Login jdoe@example.com -Json -Output leaver.json
     Writes the full evidence report as JSON to leaver.json.
 
 .EXAMPLE
-    pwsh ./Confirm-LeaverDeprovisioned.ps1 -Login jdoe@example.com -Limit 5 -Output leaver.csv
+    pwsh ./confirm_leaver_deprovisioned.ps1 -Login jdoe@example.com -Limit 5 -Output leaver.csv
     Shows at most 5 evidence items per check and writes the CSV report.
 #>
 

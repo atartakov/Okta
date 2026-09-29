@@ -40,15 +40,15 @@
     default; JSON (waste + duplicates) with -Json.
 
 .EXAMPLE
-    pwsh ./License-Optimizer.ps1
+    pwsh ./license_optimizer.ps1
     Reports waste candidates and duplicate identities over the last 90 days.
 
 .EXAMPLE
-    pwsh ./License-Optimizer.ps1 -LookbackDays 30 -CostFile costs.json -Output waste.json -Json
+    pwsh ./license_optimizer.ps1 -LookbackDays 30 -CostFile costs.json -Output waste.json -Json
     Uses the cost file for the last 30 days and writes a JSON report.
 
 .EXAMPLE
-    pwsh ./License-Optimizer.ps1 -Limit 20 -Output waste.csv
+    pwsh ./license_optimizer.ps1 -Limit 20 -Output waste.csv
     Analyzes up to 20 apps and writes the ranked waste CSV.
 #>
 

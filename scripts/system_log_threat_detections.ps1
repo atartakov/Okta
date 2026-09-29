@@ -69,11 +69,11 @@
     Write the report to this file path as well as displaying it.
 
 .EXAMPLE
-    .\SystemLog-ThreatDetections.ps1
+    .\system_log_threat_detections.ps1
     Run all detectors over the last 24 hours of System Log events.
 
 .EXAMPLE
-    .\SystemLog-ThreatDetections.ps1 -LookbackHours 72 -MfaEvent "user.authentication.auth_via_push" -Json -Output .\threats.json
+    .\system_log_threat_detections.ps1 -LookbackHours 72 -MfaEvent "user.authentication.auth_via_push" -Json -Output .\threats.json
     Scan 72 hours using a custom MFA event type, save findings as JSON.
 #>
 

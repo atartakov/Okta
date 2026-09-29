@@ -54,15 +54,15 @@
     The console output is always printed as well.
 
 .EXAMPLE
-    pwsh ./New-RestorePlan.ps1 -BackupPath ./backup-2026-09-28.json
+    pwsh ./new_restore_plan.ps1 -BackupPath ./backup-2026-09-28.json
     Prints the markdown restore plan, with approval gates listed first.
 
 .EXAMPLE
-    pwsh ./New-RestorePlan.ps1 -BackupPath ./backup.json -Json -Output plan.json
+    pwsh ./new_restore_plan.ps1 -BackupPath ./backup.json -Json -Output plan.json
     Writes the structured plan as JSON to plan.json.
 
 .EXAMPLE
-    pwsh ./New-RestorePlan.ps1 -BackupPath ./backup.json -Output plan.md
+    pwsh ./new_restore_plan.ps1 -BackupPath ./backup.json -Output plan.md
     Writes the markdown plan to plan.md.
 #>
 

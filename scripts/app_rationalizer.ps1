@@ -40,11 +40,11 @@
     Write the report to this file path as well as displaying it.
 
 .EXAMPLE
-    .\App-Rationalizer.ps1
+    .\app_rationalizer.ps1
     Rank all apps by logins over the last 90 days.
 
 .EXAMPLE
-    .\App-Rationalizer.ps1 -LookbackDays 30 -Limit 25 -Json -Output .\rationalizer.json
+    .\app_rationalizer.ps1 -LookbackDays 30 -Limit 25 -Json -Output .\rationalizer.json
     Top 25 apps by logins over the last 30 days, as JSON, saved to a file.
 #>
 
