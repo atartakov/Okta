@@ -21,7 +21,7 @@
           zone), and INACTIVE zones still referenced by auth-policy rules
           (their network conditions can never match).
 
-    This is the OIE counterpart to Sign-OnPolicyLinter.ps1, which covers
+    This is the OIE counterpart to sign_on_policy_linter.ps1, which covers
     classic OKTA_SIGN_ON policies only. Nothing here reads or flags classic
     sign-on policies.
 
@@ -49,15 +49,15 @@
     CSV when the path ends in .csv; otherwise table text.
 
 .EXAMPLE
-    pwsh ./Test-OiePosture.ps1
+    pwsh ./test_oie_posture.ps1
     Lints the whole OIE posture and prints the findings table, scariest first.
 
 .EXAMPLE
-    pwsh ./Test-OiePosture.ps1 -Limit 3 -Json -Output oie-posture.json
+    pwsh ./test_oie_posture.ps1 -Limit 3 -Json -Output oie-posture.json
     Lints up to 3 authentication policies and writes the findings as JSON.
 
 .EXAMPLE
-    pwsh ./Test-OiePosture.ps1 -Output oie-posture.csv
+    pwsh ./test_oie_posture.ps1 -Output oie-posture.csv
     Writes all findings as CSV to oie-posture.csv.
 #>
 

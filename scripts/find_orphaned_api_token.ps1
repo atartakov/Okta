@@ -34,12 +34,12 @@
     Process at most this many tokens (0 = all).
 
 .EXAMPLE
-    pwsh ./Find-OrphanedApiToken.ps1
+    pwsh ./find_orphaned_api_token.ps1
     Builds token-report-<timestamp>/ with tokens.csv and SUMMARY.md and
     prints the flagged tokens to the console.
 
 .EXAMPLE
-    pwsh ./Find-OrphanedApiToken.ps1 -OutputDir ./audit-tokens -Json
+    pwsh ./find_orphaned_api_token.ps1 -OutputDir ./audit-tokens -Json
     Writes the pack to ./audit-tokens and dumps the rows as JSON.
 #>
 
