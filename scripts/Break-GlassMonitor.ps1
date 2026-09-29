@@ -64,7 +64,7 @@ param(
     [string]$Output
 )
 
-Import-Module "$PSScriptRoot/../../lib/OktaClient.psm1" -Force
+Import-Module "$PSScriptRoot/../lib/OktaClient.psm1" -Force
 $client = New-OktaClient
 
 $ErrorActionPreference = 'Stop'

@@ -73,7 +73,7 @@ param(
     [string]$Output
 )
 
-Import-Module "$PSScriptRoot/../../lib/OktaClient.psm1" -Force
+Import-Module "$PSScriptRoot/../lib/OktaClient.psm1" -Force
 $client = New-OktaClient
 
 $script:VolatileFields = @('created', 'lastUpdated', '_links', 'lastLogin', 'statusChanged', 'passwordChanged')

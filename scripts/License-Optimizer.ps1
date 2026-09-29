@@ -61,7 +61,7 @@ param(
     [string]$Output
 )
 
-Import-Module "$PSScriptRoot/../../lib/OktaClient.psm1" -Force
+Import-Module "$PSScriptRoot/../lib/OktaClient.psm1" -Force
 $client = New-OktaClient
 
 $cutoffIso = (Get-Date).ToUniversalTime().AddDays(-$LookbackDays).ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
