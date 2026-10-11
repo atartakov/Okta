@@ -16,6 +16,14 @@ inputs:
     description: Largest membership change one PR may make before it is flagged
     required: false
     default: "50"
+  sarif:
+    description: "Also write SARIF to this path (upload it with github/codeql-action/upload-sarif; needs code scanning on the repo)"
+    required: false
+    default: ""
+  source-dir:
+    description: "Terraform directory, so SARIF results point at the resource block (default is the plan directory)"
+    required: false
+    default: ""
   comment:
     description: Post the report as a pull request comment ("true"/"false")
     required: false
@@ -24,6 +32,9 @@ outputs:
   report:
     description: Path to the Markdown report
     value: ${{ steps.run.outputs.report }}
+  sarif:
+    description: Path to the SARIF file, when requested
+    value: ${{ inputs.sarif }}
 runs:
   using: composite
   steps:
@@ -38,6 +49,8 @@ runs:
         set +e
         args=(check --plan "${{ inputs.plan }}" --fail-on "${{ inputs.fail-on }}" --max-change "${{ inputs.max-change }}" --output okta-guardrails.md)
         if [ -n "${{ inputs.population }}" ]; then args+=(--population "${{ inputs.population }}"); fi
+        if [ -n "${{ inputs.sarif }}" ]; then args+=(--sarif "${{ inputs.sarif }}"); fi
+        if [ -n "${{ inputs.source-dir }}" ]; then args+=(--source-dir "${{ inputs.source-dir }}"); fi
         okta-guardrails "${args[@]}"
         code=$?
         cat okta-guardrails.md >> "$GITHUB_STEP_SUMMARY"
