@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import re
 from collections import Counter
+from pathlib import Path
 
 from .blast import BlastResult
 from .findings import Finding, SEVERITIES, sev_rank
@@ -67,3 +69,64 @@ def as_json(findings: list[Finding], blast: BlastResult | None, failed: bool) ->
         "access_impact": [i.to_dict() for i in blast.impacts] if blast else [],
         "unevaluated": [{"address": a, "reason": r} for a, r in blast.unevaluated] if blast else [],
     }, indent=2)
+
+
+SARIF_LEVEL = {"critical": "error", "high": "error", "medium": "warning", "low": "note", "info": "note"}
+SECURITY_SEVERITY = {"critical": "9.5", "high": "8.0", "medium": "5.5", "low": "3.0", "info": "1.0"}
+
+
+def _rel(path: Path) -> str:
+    """Repo-relative URI when the file is under the working directory."""
+    try:
+        return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
+
+
+def _locate(address: str, source_dir: Path | None) -> tuple[str, int] | None:
+    """Find `resource "type" "name"` for a plan address in the .tf files."""
+    if source_dir is None or not source_dir.is_dir():
+        return None
+    parts = re.sub(r"\[[^\]]*\]", "", address).split(".")
+    if len(parts) < 2 or parts[-3:-2] == ["data"]:
+        return None
+    typ, name = parts[-2], parts[-1]
+    pat = re.compile(r'^\s*resource\s+"%s"\s+"%s"' % (re.escape(typ), re.escape(name)))
+    for tf in sorted(source_dir.rglob("*.tf")):
+        if ".terraform" in tf.parts:
+            continue
+        for n, line in enumerate(tf.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            if pat.match(line):
+                return _rel(tf), n
+    return None
+
+
+def sarif(findings: list[Finding], rule_summaries: dict[str, str], plan_path: str,
+          source_dir: str | None = None, version: str = "0") -> str:
+    """SARIF 2.1.0 for GitHub code scanning. Each finding points at the
+    resource block in the .tf files when it can be found, else at the plan."""
+    src = Path(source_dir) if source_dir else None
+    used = sorted({f.rule_id for f in findings})
+    rules = [{"id": r, "name": r, "shortDescription": {"text": rule_summaries.get(r, r)},
+              "helpUri": "https://github.com/dorkagent/Okta/tree/main/okta-guardrails#checks"} for r in used]
+    results = []
+    for f in _sorted(findings):
+        loc = _locate(f.address, src)
+        uri, line = loc if loc else (_rel(Path(plan_path)), 1)
+        results.append({
+            "ruleId": f.rule_id,
+            "level": SARIF_LEVEL[f.severity],
+            "message": {"text": f"{f.title}. {f.detail} Fix: {f.recommendation}"},
+            "locations": [{"physicalLocation": {"artifactLocation": {"uri": uri},
+                                                "region": {"startLine": line}}}],
+            "partialFingerprints": {"oktaGuardrails/v1": f"{f.rule_id}:{f.address}:{f.title}"},
+            "properties": {"security-severity": SECURITY_SEVERITY[f.severity], "resource": f.address},
+        })
+    return json.dumps({
+        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+        "version": "2.1.0",
+        "runs": [{"tool": {"driver": {"name": "okta-guardrails", "version": version,
+                                      "informationUri": "https://github.com/dorkagent/Okta/tree/main/okta-guardrails",
+                                      "rules": rules}},
+                  "results": results}],
+    }, indent=2) + "\n"
