@@ -55,6 +55,8 @@ Exit codes: `0` passed, `1` a finding at or above `--fail-on` (default `high`), 
 | `--max-change N` | Flag any group whose membership moves by more than N in one PR (default 50) |
 | `--skip RULE_ID` | Turn a check off (repeatable) |
 | `--format json` | Machine-readable output |
+| `--format sarif` / `--sarif FILE` | SARIF 2.1.0 for GitHub code scanning; each finding points at its `resource` block in the `.tf` files |
+| `--source-dir DIR` | Where to look for those `.tf` files (default: the plan's directory) |
 
 ## GitHub Action
 
@@ -65,6 +67,11 @@ Exit codes: `0` passed, `1` a finding at or above `--fail-on` (default `high`), 
     plan: plan.json
     population: users.json   # optional
     fail-on: high
+    sarif: okta-guardrails.sarif   # optional
+- uses: github/codeql-action/upload-sarif@v3   # needs code scanning enabled on the repo
+  if: always()
+  with:
+    sarif_file: okta-guardrails.sarif
 ```
 
 The report goes to the job summary and to a single PR comment that updates on every push. [`okta-guardrails-plan.yml`](../.github/workflows/okta-guardrails-plan.yml) plans [`examples/baseline`](examples/baseline) against a real developer tenant and runs the action; it stays off until the tenant secrets exist.
@@ -101,7 +108,19 @@ Checks look at the change, not the end state. A wildcard redirect that already e
 }
 ```
 
-`groups` on a user are memberships that *don't* come from group rules: directory-sourced and manual assignments. Membership from rules is computed. The bundled file is synthetic (`scripts/gen_population.py`). A read-only exporter for a real tenant is on the roadmap.
+`groups` on a user are memberships that *don't* come from group rules: directory-sourced and manual assignments. Membership from rules is computed. The bundled file is synthetic (`scripts/gen_population.py`).
+
+### From a real tenant
+
+```bash
+export OKTA_DOMAIN=https://dev-123456.okta.com
+export OKTA_API_TOKEN=...          # read-only admin token; or OKTA_ACCESS_TOKEN for an OAuth service app
+okta-guardrails export-population --out population.json
+```
+
+GET requests only. Okta's API doesn't say *why* someone is in a group, so for each group an active rule targets, members the rule's expression matches are set aside as rule-made and everyone else is kept as a direct member. Rules the evaluator can't read keep all their members and are listed as warnings. Phone numbers and street addresses are left out unless you add `--attribute NAME`. The file is real directory data: `population*.json` is git-ignored, so keep it that way and delete it when you're done.
+
+[`examples/live-smoke`](examples/live-smoke) is a plan-only config that imports one existing test group, adds a group rule and one deliberately unsafe app. Run against a developer tenant, it gives a real provider plan with a real update, create and import; the report should block on the unsafe app and preview the rule against your actual users.
 
 ## How the access preview works
 
@@ -119,6 +138,7 @@ tests/                 pytest suite (run: pytest)
 fixtures/              demo plans (population.json is generated)
 scripts/               generators for the fixtures
 examples/baseline/     Terraform for a small, safe baseline tenant (OAuth service app, private_key_jwt)
+examples/live-smoke/   plan-only smoke test against a real developer tenant
 docs/DESIGN.md         decisions, prior art, roadmap
 action.yml             composite GitHub Action
 (workflows live in the repo root: .github/workflows/okta-guardrails-*.yml)
@@ -126,8 +146,8 @@ action.yml             composite GitHub Action
 
 ## Safety
 
-- Analysing a plan needs no credentials and makes no network calls.
+- Analysing a plan needs no credentials and makes no network calls. Only `export-population` talks to Okta, and only with GET.
 - The example Terraform authenticates as an OAuth service app with `private_key_jwt` and narrow scopes, never an SSWS token.
 - Break-glass admin accounts belong outside Terraform.
 - Nothing here applies changes. The workflow plans; a human applies.
-- All data in this repo is synthetic.
+- All data committed to this repo is synthetic. Exported populations stay local.
