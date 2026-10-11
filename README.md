@@ -47,6 +47,7 @@ with its own tests and GitHub Action; see [okta-guardrails/README.md](okta-guard
 | `scripts/app_rationalizer.py` | Ranks SSO apps by login volume; flags duplicates and zero-use removal candidates. |
 | `scripts/system_log_threat_detections.py` | Detects impossible travel, MFA fatigue, and token replay / session anomalies in the System Log. |
 | `scripts/tenant_drift_detector.py` | Snapshots tenant config to versioned JSON and diffs snapshots over time. |
+| `scripts/out_of_band_changes.py` | Reports config and access changes made outside code (Admin Console clicks, ad-hoc API calls): sorts System Log changes into via code / automatic / manual, ranks manual ones by risk, groups them by who did it, and can name who caused each line of a drift diff. |
 
 ### PowerShell (`scripts/`)
 
@@ -61,6 +62,7 @@ with its own tests and GitHub Action; see [okta-guardrails/README.md](okta-guard
 | `scripts/app_rationalizer.ps1` | Ranks SSO apps by login volume; flags duplicates and zero-use removal candidates. |
 | `scripts/system_log_threat_detections.ps1` | Detects impossible travel, MFA fatigue, and token replay / session anomalies in the System Log. |
 | `scripts/tenant_drift_detector.ps1` | Snapshots tenant config to versioned JSON and diffs snapshots over time. |
+| `scripts/out_of_band_changes.ps1` | Reports config and access changes made outside code (Admin Console clicks, ad-hoc API calls): sorts System Log changes into via code / automatic / manual, ranks manual ones by risk, groups them by who did it, and can name who caused each line of a drift diff. |
 
 Run any script with `--help` for its options (Python) or `Get-Help` (PowerShell), e.g.:
 
@@ -78,6 +80,7 @@ Python examples:
 python scripts/mfa_coverage.py --limit 25        # trial run on 25 users
 python scripts/mfa_coverage.py --json --output report.json
 python scripts/tenant_drift_detector.py --snapshot
+python scripts/out_of_band_changes.py --since 24h --automation-actor 0oaTERRAFORMAPP --fail-on high
 ```
 
 PowerShell examples:
@@ -85,6 +88,7 @@ PowerShell examples:
 ```powershell
 ./scripts/stale_account_sweeper.ps1 -Days 90 -Json -Output stale.json
 ./scripts/tenant_drift_detector.ps1 -Snapshot
+./scripts/out_of_band_changes.ps1 -Since 24h -AutomationActor "0oaTERRAFORMAPP" -Markdown -Output report.md
 ```
 
 ## Roadmap
@@ -100,3 +104,4 @@ The original nine ideas are all implemented (both languages). Further ideas welc
 - ✅ App rationalizer — [`app_rationalizer.py`](scripts/app_rationalizer.py) · [`app_rationalizer.ps1`](scripts/app_rationalizer.ps1)
 - ✅ System Log threat detections — [`system_log_threat_detections.py`](scripts/system_log_threat_detections.py) · [`system_log_threat_detections.ps1`](scripts/system_log_threat_detections.ps1)
 - ✅ Tenant drift detector — [`tenant_drift_detector.py`](scripts/tenant_drift_detector.py) · [`tenant_drift_detector.ps1`](scripts/tenant_drift_detector.ps1)
+- ✅ Out-of-band change reporter (who changed Okta outside code; pairs with the drift detector via `--drift`) — [`out_of_band_changes.py`](scripts/out_of_band_changes.py) · [`out_of_band_changes.ps1`](scripts/out_of_band_changes.ps1)
