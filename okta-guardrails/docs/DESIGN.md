@@ -39,6 +39,6 @@ Surveyed October 2026 (GitHub repository and code search, Terraform Registry, we
 ## Roadmap
 
 - **Phase 1 (this release):** checks OG001–OG008, access preview BR001–BR004, CLI, Action, demo fixtures, CI.
-- **Phase 2:** capture real plans from a developer tenant to replace the hand-built fixtures; read-only population exporter (Okta API, `okta.users.read` + `okta.groups.read`, private_key_jwt); SARIF output.
+- **Phase 2 (in progress):** done: read-only population exporter (`export-population`, GET only, sets rule-made memberships aside), SARIF 2.1.0 output pointing at resource blocks, `examples/live-smoke` verified against a real developer tenant (real okta provider 7.x plan with an import, an update and creates; report blocked the unsafe app and previewed the rule on real users). Next: OAuth service-app auth (private_key_jwt) for the exporter and CI, then replace the hand-built demo plans with captured ones.
 - **Phase 3:** apps reached through `okta_app_group_assignments` and push groups; group-to-AWS permission-set mapping; waivers file with expiry and owner.
 - **Phase 4:** optional cross-check of authentication-policy changes with Okta's Policy Simulation API for named VIP and service accounts.
