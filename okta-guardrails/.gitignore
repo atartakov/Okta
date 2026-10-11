@@ -13,4 +13,6 @@ plan.json
 okta-guardrails.md
 report.md
 *.pem
-fixtures/population.json
+population*.json
+
+*.sarif
