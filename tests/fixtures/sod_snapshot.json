@@ -1,0 +1,72 @@
+{
+  "users": [
+    {"id": "00uALICE", "status": "ACTIVE", "profile": {"login": "alice.admin@example.com", "firstName": "Alice", "lastName": "Admin"}},
+    {"id": "00uBOB", "status": "ACTIVE", "profile": {"login": "bob.lead@example.com", "firstName": "Bob", "lastName": "Lead"}},
+    {"id": "00uCAROL", "status": "ACTIVE", "profile": {"login": "carol.cloud@example.com", "firstName": "Carol", "lastName": "Cloud"}},
+    {"id": "00uDAVE", "status": "SUSPENDED", "profile": {"login": "dave.ap@example.com", "firstName": "Dave", "lastName": "Payables"}},
+    {"id": "00uERIN", "status": "ACTIVE", "profile": {"login": "erin.vendor@example.com", "firstName": "Erin", "lastName": "Vendor"}},
+    {"id": "00uFRANK", "status": "ACTIVE", "profile": {"login": "frank.ops@example.com", "firstName": "Frank", "lastName": "Ops"}},
+    {"id": "00uGRACE", "status": "ACTIVE", "profile": {"login": "breakglass@example.com", "firstName": "Break", "lastName": "Glass"}},
+    {"id": "00uHENRY", "status": "DEPROVISIONED", "profile": {"login": "henry.gone@example.com", "firstName": "Henry", "lastName": "Gone"}},
+    {"id": "00uIVAN", "status": "ACTIVE", "profile": {"login": "ivan.pay@example.com", "firstName": "Ivan", "lastName": "Pay"}}
+  ],
+  "groups": [
+    {"id": "00gEVERYONE", "type": "BUILT_IN", "profile": {"name": "Everyone"}},
+    {"id": "00gOKTAADM", "type": "OKTA_GROUP", "profile": {"name": "Okta-Admins"}},
+    {"id": "00gAWSPROD", "type": "OKTA_GROUP", "profile": {"name": "AWS-Prod-Admins"}},
+    {"id": "00gFINAPP", "type": "OKTA_GROUP", "profile": {"name": "Finance-Approvers"}},
+    {"id": "00gVENDOR", "type": "OKTA_GROUP", "profile": {"name": "NetSuite-Vendor-Maintenance"}},
+    {"id": "00gAPAPPR", "type": "APP_GROUP", "profile": {"name": "NetSuite-AP-Approvers"}},
+    {"id": "00gREVIEW", "type": "OKTA_GROUP", "profile": {"name": "Access-Reviewers"}},
+    {"id": "00gPAYADM", "type": "OKTA_GROUP", "profile": {"name": "Payments-Custom-Admins"}}
+  ],
+  "group_members": {
+    "00gOKTAADM": ["00uBOB"],
+    "00gAWSPROD": ["00uCAROL", "00uHENRY"],
+    "00gFINAPP": ["00uCAROL", "00uHENRY"],
+    "00gVENDOR": ["00uDAVE", "00uERIN", "00uIVAN"],
+    "00gAPAPPR": ["00uERIN"],
+    "00gREVIEW": ["00uALICE", "00uBOB"],
+    "00gPAYADM": ["00uIVAN"]
+  },
+  "group_rules": [
+    {"id": "0prENG", "name": "Engineering leads to Okta-Admins", "status": "ACTIVE",
+     "actions": {"assignUserToGroups": {"groupIds": ["00gOKTAADM"]}}},
+    {"id": "0prCLOUD", "name": "Cloud team to AWS prod", "status": "ACTIVE",
+     "actions": {"assignUserToGroups": {"groupIds": ["00gAWSPROD"]}}},
+    {"id": "0prOLD", "name": "Old finance rule", "status": "INACTIVE",
+     "actions": {"assignUserToGroups": {"groupIds": ["00gFINAPP"]}}}
+  ],
+  "apps": [
+    {"id": "0oaAWS", "name": "amazon_aws_sso", "label": "AWS IAM Identity Center", "status": "ACTIVE"},
+    {"id": "0oaBILL", "name": "billcom", "label": "Bill.com", "status": "ACTIVE"},
+    {"id": "0oaOLD", "name": "oldapp", "label": "Retired Payments", "status": "INACTIVE"}
+  ],
+  "app_users": {
+    "0oaAWS": [{"id": "00uCAROL", "scope": "GROUP"}, {"id": "00uHENRY", "scope": "GROUP"}],
+    "0oaBILL": [{"id": "00uDAVE", "scope": "USER"}],
+    "0oaOLD": [{"id": "00uERIN", "scope": "USER"}]
+  },
+  "app_groups": {
+    "0oaAWS": ["00gAWSPROD"],
+    "0oaBILL": []
+  },
+  "user_roles": {
+    "00uALICE": [{"id": "ra1", "type": "SUPER_ADMIN", "label": "Super Administrator", "assignmentType": "USER"}],
+    "00uFRANK": [{"id": "ra2", "type": "SUPER_ADMIN", "label": "Super Administrator", "assignmentType": "USER"}],
+    "00uGRACE": [{"id": "ra3", "type": "SUPER_ADMIN", "label": "Super Administrator", "assignmentType": "USER"}],
+    "00uHENRY": [{"id": "ra4", "type": "SUPER_ADMIN", "label": "Super Administrator", "assignmentType": "USER"}]
+  },
+  "group_roles": {
+    "00gOKTAADM": [{"id": "ra5", "type": "SUPER_ADMIN", "label": "Super Administrator", "assignmentType": "GROUP"}],
+    "00gPAYADM": [{"id": "ra6", "type": "CUSTOM", "label": "Payments Approver Role", "role": "cr0PAYAPPROVE", "assignmentType": "GROUP"}]
+  },
+  "factors": {
+    "00uALICE": [{"factorType": "push", "provider": "OKTA", "status": "ACTIVE"},
+                 {"factorType": "token:software:totp", "provider": "GOOGLE", "status": "ACTIVE"},
+                 {"factorType": "webauthn", "provider": "FIDO", "status": "PENDING_ACTIVATION"}],
+    "00uBOB": [{"factorType": "webauthn", "provider": "FIDO", "status": "ACTIVE"}],
+    "00uFRANK": [],
+    "00uGRACE": []
+  }
+}
