@@ -1,0 +1,58 @@
+{
+  "zones": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      {
+        "key": "nzoCORP",
+        "resource": {
+          "id": "nzoCORP",
+          "name": "Corp IPs"
+        },
+        "changes": [
+          {
+            "path": "gateways",
+            "old": [],
+            "new": [
+              "0.0.0.0/0"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "apps": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      {
+        "key": "0oaSFDC",
+        "resource": {
+          "id": "0oaSFDC",
+          "label": "Salesforce"
+        },
+        "changes": []
+      }
+    ]
+  },
+  "policies": {
+    "added": [
+      {
+        "id": "00pNEW",
+        "name": "Mystery policy"
+      }
+    ],
+    "removed": [],
+    "changed": []
+  },
+  "auth_servers": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "admin_roles": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  }
+}
