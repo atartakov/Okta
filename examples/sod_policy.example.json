@@ -1,0 +1,56 @@
+{
+  "_comment": "Separation-of-duties policy for scripts/toxic_combinations.py and .ps1. Each rule lists two or more sides; a user who satisfies EVERY side is a finding. A side is any_of (one match is enough) or all_of (needs every entry). Entry types: app (label, name or id), app_group (an app only when it comes through a specific group), group (name or id), admin_role (role type such as SUPER_ADMIN, a role label, or a custom role id), no_phishing_resistant_factor. List the access you would rather KEEP first: when two fixes cost the same, the tool suggests changing the side listed last. exceptions = logins or user ids that are approved to hold the combination (documented break-glass accounts etc.).",
+  "phishing_resistant_factors": ["webauthn", "smart_card", "signed_nonce"],
+  "rules": [
+    {
+      "id": "SOD-001",
+      "name": "Okta super admin without phishing-resistant MFA",
+      "severity": "critical",
+      "why": "A phished password plus a pushed or typed code is enough to take over the whole Okta tenant.",
+      "sides": [
+        {"label": "Okta super admin", "any_of": [{"type": "admin_role", "value": "SUPER_ADMIN"}]},
+        {"label": "No phishing-resistant factor", "any_of": [{"type": "no_phishing_resistant_factor"}]}
+      ],
+      "exceptions": []
+    },
+    {
+      "id": "SOD-002",
+      "name": "AWS production admin who is also a finance approver",
+      "severity": "high",
+      "why": "One person could both run up cloud spend and approve the invoices for it.",
+      "sides": [
+        {"label": "AWS prod admin", "any_of": [
+          {"type": "app_group", "app": "AWS IAM Identity Center", "group": "AWS-Prod-Admins"},
+          {"type": "group", "value": "AWS-Prod-Admins"}
+        ]},
+        {"label": "Finance approver", "any_of": [{"type": "group", "value": "Finance-Approvers"}]}
+      ]
+    },
+    {
+      "id": "SOD-003",
+      "name": "Creates vendors and approves payments",
+      "severity": "critical",
+      "why": "Classic payment fraud: set up a fake vendor, then approve its invoices.",
+      "sides": [
+        {"label": "Creates vendors", "any_of": [{"type": "group", "value": "NetSuite-Vendor-Maintenance"}]},
+        {"label": "Approves payments", "any_of": [
+          {"type": "group", "value": "NetSuite-AP-Approvers"},
+          {"type": "app", "value": "Bill.com"}
+        ]}
+      ]
+    },
+    {
+      "id": "SOD-004",
+      "name": "Grants admin rights and reviews them",
+      "severity": "medium",
+      "why": "Someone who can hand out admin roles should not also certify who has them.",
+      "sides": [
+        {"label": "Can grant admin roles", "any_of": [
+          {"type": "admin_role", "value": "SUPER_ADMIN"},
+          {"type": "admin_role", "value": "ORG_ADMIN"}
+        ]},
+        {"label": "Access reviewer", "any_of": [{"type": "group", "value": "Access-Reviewers"}]}
+      ]
+    }
+  ]
+}
