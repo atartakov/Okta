@@ -24,6 +24,13 @@ $env:OKTA_API_TOKEN = "00..."                    # SSWS token; read-only is enou
 Tokens live in environment variables only -- nothing here will ever ask you
 to paste one into a file.
 
+## okta-guardrails (`okta-guardrails/`)
+
+Okta-aware guardrails and a who-gains/who-loses access preview for Terraform
+plans. Reads `terraform show -json`, re-evaluates changed group rules against a
+user population, and fails PRs that weaken the tenant. Standalone Python package
+with its own tests and GitHub Action; see [okta-guardrails/README.md](okta-guardrails/README.md).
+
 ## Scripts
 
 ### Python (`scripts/`)
