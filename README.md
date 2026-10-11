@@ -48,6 +48,9 @@ with its own tests and GitHub Action; see [okta-guardrails/README.md](okta-guard
 | `scripts/system_log_threat_detections.py` | Detects impossible travel, MFA fatigue, and token replay / session anomalies in the System Log. |
 | `scripts/tenant_drift_detector.py` | Snapshots tenant config to versioned JSON and diffs snapshots over time. |
 | `scripts/out_of_band_changes.py` | Reports config and access changes made outside code (Admin Console clicks, ad-hoc API calls): sorts System Log changes into via code / automatic / manual, ranks manual ones by risk, groups them by who did it, and can name who caused each line of a drift diff. |
+| `scripts/nhi_inventory.py` | Non-human identity inventory: every service app, token-exchange (AI agent) app, API service integration, SSWS API token and service-account-like user in one risk-ranked table, with a plain-English reason per row (admin roles on clients, takeover-capable scopes like `okta.roles.manage`, unrotated secrets, orphaned or admin-owned tokens, tokens usable from any IP). Free, scriptable alternative to Okta ISPM's NHI view; `--fail-on` for CI. |
+| `scripts/toxic_combinations.py` | Separation-of-duties checker: finds users holding toxic access combinations from a JSON policy (apps, app-via-group, groups, admin roles, "no phishing-resistant factor"), shows HOW each side was granted (direct / group / rule-managed group / directory group / Everyone), suggests the smallest fix; JSON/CSV, `--fail-on` for CI. Works without an OIG or ISPM licence. |
+| `scripts/phishing_resistant_whatif.py` | Before requiring phishing-resistant MFA (passkeys/FIDO2, FastPass, smart card) for a group or app, shows who would be locked out: combines enrolled factors, what they actually used and from which OS (System Log), and the policy rules in their path. Classes READY / ENROLLED_NOT_USED / AT_RISK / NO_MFA / PLATFORM_BLOCKER, a lockout list with a fix per user, a rollout order, and `--fail-on-lockout`. |
 
 ### PowerShell (`scripts/`)
 
@@ -63,6 +66,9 @@ with its own tests and GitHub Action; see [okta-guardrails/README.md](okta-guard
 | `scripts/system_log_threat_detections.ps1` | Detects impossible travel, MFA fatigue, and token replay / session anomalies in the System Log. |
 | `scripts/tenant_drift_detector.ps1` | Snapshots tenant config to versioned JSON and diffs snapshots over time. |
 | `scripts/out_of_band_changes.ps1` | Reports config and access changes made outside code (Admin Console clicks, ad-hoc API calls): sorts System Log changes into via code / automatic / manual, ranks manual ones by risk, groups them by who did it, and can name who caused each line of a drift diff. |
+| `scripts/nhi_inventory.ps1` | Non-human identity inventory: every service app, token-exchange (AI agent) app, API service integration, SSWS API token and service-account-like user in one risk-ranked table, with a plain-English reason per row (admin roles on clients, takeover-capable scopes like `okta.roles.manage`, unrotated secrets, orphaned or admin-owned tokens, tokens usable from any IP). Free, scriptable alternative to Okta ISPM's NHI view; `-FailOn` for CI. |
+| `scripts/toxic_combinations.ps1` | Separation-of-duties checker: finds users holding toxic access combinations from a JSON policy (apps, app-via-group, groups, admin roles, "no phishing-resistant factor"), shows HOW each side was granted (direct / group / rule-managed group / directory group / Everyone), suggests the smallest fix; JSON/CSV, `-FailOn` for CI. Works without an OIG or ISPM licence. |
+| `scripts/phishing_resistant_whatif.ps1` | Before requiring phishing-resistant MFA (passkeys/FIDO2, FastPass, smart card) for a group or app, shows who would be locked out: combines enrolled factors, what they actually used and from which OS (System Log), and the policy rules in their path. Classes READY / ENROLLED_NOT_USED / AT_RISK / NO_MFA / PLATFORM_BLOCKER, a lockout list with a fix per user, a rollout order, and `-FailOnLockout`. |
 
 Run any script with `--help` for its options (Python) or `Get-Help` (PowerShell), e.g.:
 
@@ -81,6 +87,9 @@ python scripts/mfa_coverage.py --limit 25        # trial run on 25 users
 python scripts/mfa_coverage.py --json --output report.json
 python scripts/tenant_drift_detector.py --snapshot
 python scripts/out_of_band_changes.py --since 24h --automation-actor 0oaTERRAFORMAPP --fail-on high
+python scripts/nhi_inventory.py --csv --output nhi.csv --min-risk medium
+python scripts/toxic_combinations.py --policy examples/sod_policy.example.json --csv sod.csv --fail-on high
+python scripts/phishing_resistant_whatif.py --group "Engineering" --app "Salesforce" --lookback-days 30
 ```
 
 PowerShell examples:
@@ -89,6 +98,9 @@ PowerShell examples:
 ./scripts/stale_account_sweeper.ps1 -Days 90 -Json -Output stale.json
 ./scripts/tenant_drift_detector.ps1 -Snapshot
 ./scripts/out_of_band_changes.ps1 -Since 24h -AutomationActor "0oaTERRAFORMAPP" -Markdown -Output report.md
+./scripts/nhi_inventory.ps1 -Csv -Output nhi.csv -MinRisk medium
+./scripts/toxic_combinations.ps1 -Policy examples/sod_policy.example.json -Json -Output sod.json -Csv sod.csv
+./scripts/phishing_resistant_whatif.ps1 -Group "Engineering" -App "Salesforce" -LookbackDays 30
 ```
 
 ## Roadmap
