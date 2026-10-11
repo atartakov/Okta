@@ -1,0 +1,47 @@
+name: out-of-band changes (nightly)
+
+# Nightly read-only check: who changed Okta outside code in the last 24h.
+# Inert until the `okta-dev` environment has OKTA_DOMAIN, OKTA_API_TOKEN
+# (read-only token that can read the System Log) and OKTA_AUTOMATION_ACTORS
+# (comma-separated ids/logins of the identities that change Okta via code).
+
+on:
+  schedule:
+    - cron: "17 13 * * *"   # 06:17 PT
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    environment: okta-dev
+    steps:
+      - id: gate
+        env:
+          OKTA_DOMAIN: ${{ secrets.OKTA_DOMAIN }}
+        run: echo "enabled=$([ -n "$OKTA_DOMAIN" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.enabled == 'true'
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.enabled == 'true'
+        with:
+          python-version: "3.12"
+      - if: steps.gate.outputs.enabled == 'true'
+        run: pip install -r requirements.txt
+      - name: Report manual changes (fails on HIGH)
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          OKTA_DOMAIN: ${{ secrets.OKTA_DOMAIN }}
+          OKTA_API_TOKEN: ${{ secrets.OKTA_API_TOKEN }}
+          ACTORS: ${{ secrets.OKTA_AUTOMATION_ACTORS }}
+        run: |
+          args=()
+          IFS=',' read -ra list <<< "$ACTORS"
+          for a in "${list[@]}"; do args+=(--automation-actor "$(echo "$a" | xargs)"); done
+          set +e
+          python scripts/out_of_band_changes.py --since 24h "${args[@]}" --markdown --output report.md --fail-on high
+          code=$?
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          exit $code
