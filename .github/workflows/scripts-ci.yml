@@ -40,3 +40,12 @@ jobs:
           python3 scripts/out_of_band_changes.py --input $ev --automation-actor 0oaTERRAFORM01 --drift $dr --markdown > py.md
           pwsh -NoProfile -File scripts/out_of_band_changes.ps1 -InputFile $ev -AutomationActor 0oaTERRAFORM01 -Drift $dr -Markdown > ps.md
           diff py.md ps.md
+      - name: nhi_inventory parity (PowerShell)
+        shell: bash
+        run: pwsh -NoProfile -File tests/test_nhi_inventory_ps.ps1
+      - name: toxic_combinations parity + checks (PowerShell)
+        shell: bash
+        run: pwsh -NoProfile -File tests/test_toxic_combinations_ps.ps1
+      - name: phishing_resistant_whatif parity (PowerShell)
+        shell: bash
+        run: pwsh -NoProfile -File tests/test_phishing_resistant_whatif_ps.ps1
