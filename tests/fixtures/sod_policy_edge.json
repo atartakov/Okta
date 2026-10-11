@@ -1,0 +1,25 @@
+{
+  "_comment": "Edge cases for parity tests: all_of side, custom role by id, inactive app, Everyone group, three sides, exceptions, custom factor list.",
+  "phishing_resistant_factors": ["webauthn"],
+  "rules": [
+    {"id": "E-1", "name": "Custom payments role plus vendor and AP groups", "severity": "low",
+     "sides": [
+       {"label": "Payments approver", "any_of": [{"type": "admin_role", "value": "cr0PAYAPPROVE"}]},
+       {"label": "Vendor + payments admin", "all_of": [
+         {"type": "group", "value": "NetSuite-Vendor-Maintenance"},
+         {"type": "group", "value": "Payments-Custom-Admins"}]}
+     ]},
+    {"id": "E-2", "name": "Retired app or Everyone", "severity": "medium",
+     "sides": [
+       {"label": "Retired payments app", "any_of": [{"type": "app", "value": "Retired Payments"}]},
+       {"label": "Everyone", "any_of": [{"type": "group", "value": "Everyone"}]}
+     ]},
+    {"id": "E-3", "name": "Super admin, reviewer, no WebAuthn", "severity": "high",
+     "exceptions": ["00uFRANK"],
+     "sides": [
+       {"label": "Super admin", "any_of": [{"type": "admin_role", "value": "Super Administrator"}]},
+       {"label": "Everyone member", "any_of": [{"type": "group", "value": "00gEVERYONE"}]},
+       {"label": "No WebAuthn", "any_of": [{"type": "no_phishing_resistant_factor"}]}
+     ]}
+  ]
+}
