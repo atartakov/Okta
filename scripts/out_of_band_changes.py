@@ -9,7 +9,8 @@ the System Log for configuration changes in a time window and sorts each one:
                  your pipeline's API token user, ...)
     automatic    made by Okta itself (group rules, the system principal)
     manual       anything else: an admin clicked it in the Admin Console or
-                 ran an ad-hoc API call. This is the out-of-band list.
+                 ran an ad-hoc API call. This is the out-of-band list, and
+                 each row says which: Admin Console, API, or Okta job.
 
 Manual changes are ranked by risk (admin grants, policy, network zone and
 API token changes are HIGH), grouped by who made them, and can be joined to
@@ -107,6 +108,31 @@ def actor_keys(actor: dict) -> set:
             if actor.get(k)}
 
 
+OKTA_OWNED = {"system@okta.com", "freetrialorgcreator@okta.com"}
+
+
+def actor_label(actor: dict) -> str:
+    """Login if there is one; service apps log alternateId 'unknown', so use the name."""
+    alt = actor.get("alternateId")
+    if alt and str(alt).lower() != "unknown":
+        return alt
+    return actor.get("displayName") or actor.get("id") or "?"
+
+
+def channel(event: dict) -> str:
+    """Where the change came from: Admin Console, API, or an Okta background job."""
+    uri = str(_debug(event).get("requestUri") or "")
+    ua = ((event.get("client") or {}).get("userAgent") or {})
+    if uri.startswith("/admin/") or (ua.get("browser") not in (None, "", "UNKNOWN")
+                                     and not uri.startswith("/api/")):
+        return "Admin Console"
+    if uri.startswith("/api/") or uri.startswith("/oauth2/"):
+        return "API"
+    if (event.get("transaction") or {}).get("type") == "JOB":
+        return "Okta job"
+    return "unknown"
+
+
 def _debug(event: dict) -> dict:
     return ((event.get("debugContext") or {}).get("debugData") or {})
 
@@ -119,7 +145,7 @@ def classify(event: dict, automation: set) -> str:
     if _debug(event).get("triggeredByGroupRuleId"):
         return "automatic"
     if actor.get("type") == "SystemPrincipal" or \
-            str(actor.get("alternateId", "")).lower() in ("system@okta.com",):
+            str(actor.get("alternateId", "")).lower() in OKTA_OWNED:
         return "automatic"
     return "manual"
 
@@ -130,7 +156,7 @@ def severity(event: dict, sensitive: re.Pattern) -> str:
         return "high"
     if etype in LOW_EVENTS:
         # Membership in an admin-ish group is privilege escalation by indirection.
-        for t in event.get("targets") or []:
+        for t in event_targets(event):
             if t.get("type") in ("UserGroup", "AppInstance") and \
                     sensitive.search(str(t.get("displayName", ""))):
                 return "high"
@@ -138,12 +164,50 @@ def severity(event: dict, sensitive: re.Pattern) -> str:
     return "medium"
 
 
-def describe(event: dict) -> dict:
+# Some change events (group rules, admin grants) arrive with no targets; the
+# request path still says what was touched. Order matters: most specific first.
+URI_TARGETS = [
+    (r"^/api/v1/groups/rules/([^/?]+)", "GroupRule"),
+    (r"^/api/v1/policies/[^/?]+/rules/([^/?]+)", "PolicyRule"),
+    (r"^/api/v1/policies/([^/?]+)", "Policy"),
+    (r"^/api/v1/groups/(?!rules(?:[/?]|$))([^/?]+)", "UserGroup"),
+    (r"^/api/v1/apps/([^/?]+)", "AppInstance"),
+    (r"^/api/v1/zones/([^/?]+)", "NetworkZone"),
+    (r"^/api/v1/users/([^/?]+)", "User"),
+    (r"^/oauth2/v1/clients/([^/?]+)", "OAuthClient"),
+]
+
+
+def event_targets(event: dict) -> list:
     targets = event.get("targets") or []
+    if targets:
+        return targets
+    uri = str(_debug(event).get("requestUri") or "")
+    for pattern, ttype in URI_TARGETS:
+        m = re.match(pattern, uri)
+        if m:
+            return [{"id": m.group(1), "type": ttype, "displayName": m.group(1)}]
+    return []
+
+
+def summarize(event: dict) -> str:
+    text = event.get("displayMessage") or event.get("eventType")
+    dbg = _debug(event)
+    if dbg.get("privilegeGranted"):
+        text += f": {dbg['privilegeGranted']}"
+    elif dbg.get("privilegeRevoked"):
+        text += f": {dbg['privilegeRevoked']}"
+    if str(dbg.get("requestUri") or "").startswith("/api/v1/groups/rules"):
+        text += " (group rule)"
+    return text
+
+
+def describe(event: dict) -> dict:
+    targets = event_targets(event)
     return {
         "time": event.get("published"),
         "event_type": event.get("eventType"),
-        "summary": event.get("displayMessage") or event.get("eventType"),
+        "summary": summarize(event),
         "targets": [f"{t.get('type')}: {t.get('displayName') or t.get('alternateId') or t.get('id')}"
                     for t in targets],
         "target_ids": [t.get("id") for t in targets if t.get("id")],
@@ -169,8 +233,9 @@ def analyze(events: list, automation: set, sensitive: re.Pattern,
             continue
         actor = ev.get("actor") or {}
         row = describe(ev)
-        row["actor"] = actor.get("alternateId") or actor.get("displayName") or actor.get("id")
+        row["actor"] = actor_label(actor)
         row["actor_type"] = actor.get("type")
+        row["channel"] = channel(ev)
         row["severity"] = severity(ev, sensitive)
         manual.append(row)
     manual.sort(key=lambda r: (-RANK[r["severity"]], r["time"] or ""))
@@ -207,8 +272,8 @@ def attribute_drift(diff: dict, events: list) -> list:
         if ev.get("eventType") not in ALL_EVENTS:
             continue
         actor = ev.get("actor") or {}
-        who = actor.get("alternateId") or actor.get("displayName") or actor.get("id")
-        for t in ev.get("targets") or []:
+        who = actor_label(actor)
+        for t in event_targets(ev):
             if t.get("id"):
                 by_target[t["id"]].append((ev.get("published"), who, ev.get("eventType")))
     rows = []
@@ -239,7 +304,7 @@ def render_text(result: dict, drift_rows: list | None, window: str) -> str:
         for r in rows:
             tgt = "; ".join(r["targets"][:3])
             lines.append(f"  [{r['severity'].upper():6}] {r['time']}  {r['summary']}"
-                         f"{'  -> ' + tgt if tgt else ''}  (ip {r['ip'] or '?'})")
+                         f"{'  -> ' + tgt if tgt else ''}  ({r['channel']}, ip {r['ip'] or '?'})")
         lines.append("")
     if drift_rows is not None:
         lines.append("== Drift attribution")
@@ -256,10 +321,10 @@ def render_markdown(result: dict, drift_rows: list | None, window: str) -> str:
           f"**{c['manual']} manual** · {c['via code']} via code · "
           f"{c['automatic']} automatic", ""]
     if result["manual"]:
-        md += ["| Severity | When (UTC) | Who | What | Target |",
-               "|---|---|---|---|---|"]
+        md += ["| Severity | When (UTC) | Who | Via | What | Target |",
+               "|---|---|---|---|---|---|"]
         for r in result["manual"]:
-            md.append(f"| {r['severity'].upper()} | {r['time']} | {r['actor']} | "
+            md.append(f"| {r['severity'].upper()} | {r['time']} | {r['actor']} | {r['channel']} | "
                       f"{r['summary']} | {'; '.join(r['targets'][:2])} |")
     else:
         md.append("No out-of-band changes.")
@@ -277,9 +342,11 @@ def render_markdown(result: dict, drift_rows: list | None, window: str) -> str:
 def fetch_events(since: str, until: str | None) -> list:
     from lib.okta_client import OktaClient
     client = OktaClient()
-    params = {"filter": build_filter(), "since": since, "sortOrder": "ASCENDING"}
-    if until:
-        params["until"] = until
+    # Always bound the window: a System Log query with `since` and no `until`
+    # is a polling query whose `next` link never ends.
+    until = until or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    params = {"filter": build_filter(), "since": since, "until": until,
+              "sortOrder": "ASCENDING"}
     return list(client.paged_get("/api/v1/logs", params))
 
 
