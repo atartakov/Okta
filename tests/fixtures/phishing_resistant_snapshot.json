@@ -1,0 +1,613 @@
+{
+  "collected_at": "2026-10-11T12:00:00Z",
+  "lookback_days": 30,
+  "target": {
+    "group": {
+      "id": "00gENGINEERING000001",
+      "name": "Engineering"
+    },
+    "app": {
+      "id": "0oaSALESFORCE0000001",
+      "label": "Salesforce"
+    }
+  },
+  "everyone_group_id": "00gEVERYONE000000001",
+  "users": [
+    {
+      "id": "00uALICE",
+      "status": "ACTIVE",
+      "login": "alice@example.com",
+      "factors": [
+        {
+          "factorType": "webauthn",
+          "status": "ACTIVE",
+          "provider": "FIDO",
+          "platform": null
+        },
+        {
+          "factorType": "push",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": "IOS"
+        }
+      ]
+    },
+    {
+      "id": "00uBOB",
+      "status": "ACTIVE",
+      "login": "bob@example.com",
+      "factors": [
+        {
+          "factorType": "signed_nonce",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": "WINDOWS"
+        },
+        {
+          "factorType": "push",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": "WINDOWS"
+        }
+      ]
+    },
+    {
+      "id": "00uCAROL",
+      "status": "ACTIVE",
+      "login": "Carol@example.com",
+      "factors": [
+        {
+          "factorType": "signed_nonce",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": "IOS"
+        },
+        {
+          "factorType": "push",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": "IOS"
+        }
+      ]
+    },
+    {
+      "id": "00uDAVE",
+      "status": "ACTIVE",
+      "login": "dave@example.com",
+      "factors": [
+        {
+          "factorType": "sms",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": null
+        },
+        {
+          "factorType": "token:software:totp",
+          "status": "ACTIVE",
+          "provider": "GOOGLE",
+          "platform": null
+        }
+      ]
+    },
+    {
+      "id": "00uERIN",
+      "status": "PASSWORD_EXPIRED",
+      "login": "erin@example.com",
+      "factors": [
+        {
+          "factorType": "push",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": "ANDROID"
+        }
+      ]
+    },
+    {
+      "id": "00uFRANK",
+      "status": "ACTIVE",
+      "login": "frank@example.com",
+      "factors": []
+    },
+    {
+      "id": "00uGINA",
+      "status": "STAGED",
+      "login": "gina@example.com",
+      "factors": []
+    },
+    {
+      "id": "00uHANK",
+      "status": "SUSPENDED",
+      "login": "hank@example.com",
+      "factors": [
+        {
+          "factorType": "sms",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": null
+        }
+      ]
+    },
+    {
+      "id": "00uIVAN",
+      "status": "ACTIVE",
+      "login": "ivan@example.com",
+      "factors": [
+        {
+          "factorType": "webauthn",
+          "status": "ACTIVE",
+          "provider": "FIDO",
+          "platform": null
+        },
+        {
+          "factorType": "sms",
+          "status": "PENDING_ACTIVATION",
+          "provider": "OKTA",
+          "platform": null
+        }
+      ]
+    },
+    {
+      "id": "00uJILL",
+      "status": "ACTIVE",
+      "login": "jill@example.com",
+      "factors": [
+        {
+          "factorType": "signed_nonce",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": "ANDROID"
+        },
+        {
+          "factorType": "token:software:totp",
+          "status": "ACTIVE",
+          "provider": "OKTA",
+          "platform": null
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "published": "2026-10-01T15:00:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uALICE",
+      "result": "SUCCESS",
+      "os": "Mac OS X",
+      "factor": null,
+      "methods": [
+        {
+          "method": "password",
+          "props": "[USER_PRESENCE]",
+          "key": "okta_password"
+        },
+        {
+          "method": "webauthn",
+          "props": "[PHISHING_RESISTANT, USER_PRESENCE]",
+          "key": "webauthn"
+        }
+      ]
+    },
+    {
+      "published": "2026-10-05T16:00:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uBOB",
+      "result": "SUCCESS",
+      "os": "Windows 11",
+      "factor": null,
+      "methods": [
+        {
+          "method": "signed_nonce",
+          "props": "[DEVICE_BOUND, PHISHING_RESISTANT, USER_PRESENCE, HARDWARE_PROTECTED]",
+          "key": "okta_verify"
+        }
+      ]
+    },
+    {
+      "published": "2026-10-06T16:00:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uBOB",
+      "result": "SUCCESS",
+      "os": "Linux",
+      "factor": null,
+      "methods": [
+        {
+          "method": "push",
+          "props": "[USER_PRESENCE]",
+          "key": "okta_verify"
+        }
+      ]
+    },
+    {
+      "published": "2026-10-03T09:00:00.000Z",
+      "eventType": "user.authentication.auth_via_mfa",
+      "actor_id": "00uCAROL",
+      "result": "SUCCESS",
+      "os": "iOS",
+      "factor": "SIGNED_NONCE",
+      "methods": [
+        {
+          "method": "FastPass",
+          "props": "[DEVICE_BOUND, HARDWARE_PROTECTED, USER_PRESENCE]",
+          "key": ""
+        }
+      ]
+    },
+    {
+      "published": "2026-10-04T12:00:00.000Z",
+      "eventType": "user.authentication.auth_via_mfa",
+      "actor_id": "00uDAVE",
+      "result": "SUCCESS",
+      "os": "Windows 10",
+      "factor": "SMS_FACTOR",
+      "methods": [
+        {
+          "method": "SMS",
+          "props": "[USER_PRESENCE]",
+          "key": ""
+        }
+      ]
+    },
+    {
+      "published": "2026-10-04T12:05:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uDAVE",
+      "result": "FAILURE",
+      "os": "Windows 10",
+      "factor": null,
+      "methods": [
+        {
+          "method": "webauthn",
+          "props": "[PHISHING_RESISTANT]",
+          "key": "webauthn"
+        }
+      ]
+    },
+    {
+      "published": "2026-10-02T08:00:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uERIN",
+      "result": "SUCCESS",
+      "os": "Ubuntu",
+      "factor": null,
+      "methods": [
+        {
+          "method": "push",
+          "props": "[USER_PRESENCE]",
+          "key": "okta_verify"
+        }
+      ]
+    },
+    {
+      "published": "2026-08-25T08:00:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uIVAN",
+      "result": "SUCCESS",
+      "os": "Windows 11",
+      "factor": null,
+      "methods": [
+        {
+          "method": "webauthn",
+          "props": "[PHISHING_RESISTANT]",
+          "key": "webauthn"
+        }
+      ]
+    },
+    {
+      "published": "2026-10-08T08:00:00.000Z",
+      "eventType": "user.authentication.auth_via_mfa",
+      "actor_id": "00uIVAN",
+      "result": "SUCCESS",
+      "os": "Windows 11",
+      "factor": "PASSWORD_AS_FACTOR",
+      "methods": []
+    },
+    {
+      "published": "2026-10-07T17:51:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uJILL",
+      "result": "SUCCESS",
+      "os": "Android",
+      "factor": null,
+      "methods": [
+        {
+          "method": "signed_nonce",
+          "props": "[DEVICE_BOUND, PHISHING_RESISTANT, USER_PRESENCE, HARDWARE_PROTECTED]",
+          "key": "okta_verify"
+        }
+      ]
+    },
+    {
+      "published": "2026-10-09T10:00:00.000Z",
+      "eventType": "user.authentication.verify",
+      "actor_id": "00uJILL",
+      "result": "SUCCESS",
+      "os": "Windows 11",
+      "factor": null,
+      "methods": [
+        {
+          "method": "totp",
+          "props": "[USER_PRESENCE, DEVICE_BOUND]",
+          "key": "okta_verify"
+        }
+      ]
+    },
+    {
+      "published": "2026-10-09T10:01:00.000Z",
+      "eventType": "policy.evaluate_sign_on",
+      "actor_id": "00uJILL",
+      "result": "SUCCESS",
+      "os": "Windows 11",
+      "factor": null,
+      "methods": [
+        {
+          "method": "signed_nonce",
+          "props": "[DEVICE_BOUND, PHISHING_RESISTANT, USER_PRESENCE, HARDWARE_PROTECTED]",
+          "key": "okta_verify"
+        }
+      ]
+    }
+  ],
+  "authenticators": [
+    {
+      "key": "okta_password",
+      "status": "ACTIVE",
+      "methods": []
+    },
+    {
+      "key": "webauthn",
+      "status": "INACTIVE",
+      "methods": []
+    },
+    {
+      "key": "okta_verify",
+      "status": "ACTIVE",
+      "methods": [
+        {
+          "type": "push",
+          "status": "ACTIVE"
+        },
+        {
+          "type": "signed_nonce",
+          "status": "ACTIVE"
+        }
+      ]
+    }
+  ],
+  "access_policies": [
+    {
+      "id": "rstSALES",
+      "name": "Salesforce sign-in",
+      "apps": [
+        "Salesforce"
+      ],
+      "rules": [
+        {
+          "name": "Contractors deny",
+          "priority": 0,
+          "status": "ACTIVE",
+          "conditions": {
+            "people": {
+              "groups": {
+                "include": [
+                  "00gCONTRACTORS000001"
+                ]
+              }
+            }
+          },
+          "actions": {
+            "appSignOn": {
+              "access": "DENY",
+              "verificationMethod": {
+                "factorMode": "2FA",
+                "type": "ASSURANCE",
+                "constraints": [
+                  {
+                    "knowledge": {
+                      "types": [
+                        "password"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "Office network 1FA",
+          "priority": 1,
+          "status": "ACTIVE",
+          "conditions": {
+            "network": {
+              "connection": "ZONE",
+              "include": [
+                "nzoOFFICE"
+              ]
+            }
+          },
+          "actions": {
+            "appSignOn": {
+              "access": "ALLOW",
+              "verificationMethod": {
+                "factorMode": "1FA",
+                "type": "ASSURANCE",
+                "constraints": [
+                  {
+                    "knowledge": {
+                      "types": [
+                        "password"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "Old disabled rule",
+          "priority": 2,
+          "status": "INACTIVE",
+          "conditions": null,
+          "actions": {
+            "appSignOn": {
+              "access": "ALLOW",
+              "verificationMethod": {
+                "factorMode": "2FA",
+                "type": "ASSURANCE",
+                "constraints": [
+                  {
+                    "knowledge": {
+                      "types": [
+                        "password"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "Engineering 2FA",
+          "priority": 3,
+          "status": "ACTIVE",
+          "conditions": {
+            "people": {
+              "groups": {
+                "include": [
+                  "00gENGINEERING000001"
+                ]
+              }
+            }
+          },
+          "actions": {
+            "appSignOn": {
+              "access": "ALLOW",
+              "verificationMethod": {
+                "factorMode": "2FA",
+                "type": "ASSURANCE",
+                "constraints": [
+                  {
+                    "knowledge": {
+                      "types": [
+                        "password"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "Catch-all Rule",
+          "priority": 99,
+          "status": "ACTIVE",
+          "conditions": null,
+          "actions": {
+            "appSignOn": {
+              "access": "ALLOW",
+              "verificationMethod": {
+                "factorMode": "2FA",
+                "type": "ASSURANCE",
+                "constraints": [
+                  {
+                    "possession": {
+                      "phishingResistant": "REQUIRED"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sign_on_policies": [
+    {
+      "id": "00pGSP",
+      "name": "Default Policy",
+      "priority": 1,
+      "status": "ACTIVE",
+      "conditions": {
+        "people": {
+          "groups": {
+            "include": [
+              "00gEVERYONE000000001"
+            ]
+          }
+        }
+      },
+      "rules": [
+        {
+          "name": "Default Rule",
+          "priority": 1,
+          "status": "ACTIVE",
+          "conditions": null,
+          "actions": {
+            "signon": {
+              "access": "ALLOW",
+              "requireFactor": false,
+              "primaryFactor": "PASSWORD_IDP"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "enroll_policies": [
+    {
+      "id": "00pE1",
+      "name": "Contractors enrollment",
+      "priority": 1,
+      "status": "ACTIVE",
+      "conditions": {
+        "people": {
+          "groups": {
+            "include": [
+              "00gCONTRACTORS000001"
+            ]
+          }
+        }
+      },
+      "settings": {
+        "type": "AUTHENTICATORS",
+        "authenticators": []
+      }
+    },
+    {
+      "id": "00pE2",
+      "name": "Default Policy",
+      "priority": 2,
+      "status": "ACTIVE",
+      "conditions": {
+        "people": {
+          "groups": {
+            "include": [
+              "00gEVERYONE000000001"
+            ]
+          }
+        }
+      },
+      "settings": {
+        "type": "AUTHENTICATORS",
+        "authenticators": [
+          {
+            "key": "webauthn",
+            "enroll": {
+              "self": "OPTIONAL"
+            }
+          },
+          {
+            "key": "okta_verify",
+            "enroll": {
+              "self": "OPTIONAL"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
