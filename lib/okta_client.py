@@ -11,14 +11,46 @@ from __future__ import annotations
 import os
 import time
 import urllib.parse
+from email.utils import parsedate_to_datetime
 
 import requests
 
 DEFAULT_TIMEOUT = 30
 
 
+MAX_RETRY_WAIT = 60
+
+
 class OktaAuthError(RuntimeError):
     """Raised when credentials are missing or rejected."""
+
+
+def retry_wait_seconds(headers, now: float | None = None) -> int:
+    """Seconds to sleep after an HTTP 429 from Okta.
+
+    Okta's ``x-rate-limit-reset`` is the Unix time (epoch seconds) when the
+    limit window resets, not a duration. Measure it against the response's
+    ``Date`` header (Okta's own clock, so local clock skew doesn't matter),
+    falling back to local time. Adds one second of margin, never waits more
+    than MAX_RETRY_WAIT, and defaults to 5s when the header is missing.
+    """
+    raw = headers.get("x-rate-limit-reset") if headers else None
+    try:
+        reset = int(float(raw))
+    except (TypeError, ValueError):
+        return 5
+    if reset < 1_000_000_000:
+        # Not an epoch timestamp: treat a small number as a plain duration.
+        return max(1, min(reset, MAX_RETRY_WAIT)) + 1
+    if now is None:
+        now = time.time()
+        date = headers.get("date")
+        if date:
+            try:
+                now = parsedate_to_datetime(date).timestamp()
+            except (TypeError, ValueError):
+                pass
+    return max(0, min(reset - int(now), MAX_RETRY_WAIT)) + 1
 
 
 class OktaClient:
@@ -48,9 +80,8 @@ class OktaClient:
                                         params=params, json=data,
                                         timeout=DEFAULT_TIMEOUT)
             if resp.status_code == 429:
-                # Honor Okta's rate-limit reset header, then retry.
-                wait = int(resp.headers.get("x-rate-limit-reset", "5"))
-                time.sleep(max(1, min(wait, 60)) + 1)
+                # Wait until Okta's rate-limit window resets, then retry.
+                time.sleep(retry_wait_seconds(resp.headers))
                 continue
             if resp.status_code in (401, 403):
                 raise OktaAuthError(
