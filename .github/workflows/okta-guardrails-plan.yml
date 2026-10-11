@@ -2,6 +2,8 @@
 # guardrails on the result. Off until the repo has these secrets in an
 # environment called "okta-dev":
 #   OKTA_ORG_NAME, OKTA_CLIENT_ID, OKTA_PRIVATE_KEY_ID, OKTA_PRIVATE_KEY
+# Optional: OKTA_DOMAIN + OKTA_API_TOKEN (read-only) to preview access against
+# the tenant's real users instead of the synthetic 1,500.
 # Plan only. Nothing here applies changes.
 name: okta-guardrails plan
 
@@ -47,9 +49,18 @@ jobs:
           terraform init -input=false
           terraform plan -input=false -lock=false -out=plan.bin
           terraform show -json plan.bin > plan.json
-      - name: Synthetic population
+      - name: Population (real, read-only, when a token is set; else synthetic)
         if: steps.gate.outputs.enabled == 'true'
-        run: python3 okta-guardrails/scripts/gen_population.py > population.json
+        env:
+          OKTA_DOMAIN: ${{ secrets.OKTA_DOMAIN }}
+          OKTA_API_TOKEN: ${{ secrets.OKTA_API_TOKEN }}
+        run: |
+          if [ -n "$OKTA_DOMAIN" ] && [ -n "$OKTA_API_TOKEN" ]; then
+            pip install --quiet ./okta-guardrails
+            okta-guardrails export-population --out population.json
+          else
+            python3 okta-guardrails/scripts/gen_population.py > population.json
+          fi
       - uses: ./okta-guardrails
         if: steps.gate.outputs.enabled == 'true'
         with:
