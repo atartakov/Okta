@@ -1,0 +1,64 @@
+name: okta-guardrails ci
+
+on:
+  push:
+    branches: [main]
+    paths: ["okta-guardrails/**", ".github/workflows/okta-guardrails-*.yml"]
+  pull_request:
+    paths: ["okta-guardrails/**", ".github/workflows/okta-guardrails-*.yml"]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: okta-guardrails
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+
+  demo:
+    # Runs the tool against the demo plans so every PR shows a real report.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - run: python scripts/gen_population.py > fixtures/population.json
+      - name: Risky plan must be blocked
+        run: |
+          set +e
+          okta-guardrails check --plan fixtures/plan_risky.json --population fixtures/population.json \
+            --output report.md
+          code=$?
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          test "$code" -eq 1
+      - name: Clean plan must pass
+        run: okta-guardrails check --plan fixtures/plan_clean.json --population fixtures/population.json
+
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: okta-guardrails/examples/baseline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate
