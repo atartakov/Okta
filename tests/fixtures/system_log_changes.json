@@ -1,0 +1,241 @@
+[
+  {
+    "uuid": "evt-policy.rule.update-2026-10-10T08:00:00.000Z",
+    "published": "2026-10-10T08:00:00.000Z",
+    "eventType": "policy.rule.update",
+    "displayMessage": "Update policy rule",
+    "actor": {
+      "id": "0oaTERRAFORM01",
+      "type": "PublicClientApp",
+      "alternateId": "0oaTERRAFORM01",
+      "displayName": "terraform-okta"
+    },
+    "targets": [
+      {
+        "id": "0prSALESRULE",
+        "type": "PolicyRule",
+        "displayName": "Sales -> Salesforce"
+      }
+    ],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {}
+    }
+  },
+  {
+    "uuid": "evt-group.user_membership.add-2026-10-10T08:01:00.000Z",
+    "published": "2026-10-10T08:01:00.000Z",
+    "eventType": "group.user_membership.add",
+    "displayMessage": "Add user to group membership",
+    "actor": {
+      "id": "0oaSYSTEM",
+      "type": "SystemPrincipal",
+      "alternateId": "system@okta.com",
+      "displayName": "Okta System"
+    },
+    "targets": [
+      {
+        "id": "00uU1",
+        "type": "User",
+        "alternateId": "u1@example.com",
+        "displayName": "u1@example.com"
+      },
+      {
+        "id": "00gSALES",
+        "type": "UserGroup",
+        "displayName": "Sales"
+      }
+    ],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {
+        "triggeredByGroupRuleId": "0prSALESRULE"
+      }
+    }
+  },
+  {
+    "uuid": "evt-group.user_membership.add-2026-10-10T09:15:00.000Z",
+    "published": "2026-10-10T09:15:00.000Z",
+    "eventType": "group.user_membership.add",
+    "displayMessage": "Add user to group membership",
+    "actor": {
+      "id": "00uALICE01",
+      "type": "User",
+      "alternateId": "alice.admin@example.com",
+      "displayName": "Alice Admin"
+    },
+    "targets": [
+      {
+        "id": "00uDAVE",
+        "type": "User",
+        "alternateId": "dave@example.com",
+        "displayName": "dave@example.com"
+      },
+      {
+        "id": "00gOKTAADM",
+        "type": "UserGroup",
+        "displayName": "Okta-Helpdesk-Admins"
+      }
+    ],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {}
+    }
+  },
+  {
+    "uuid": "evt-zone.update-2026-10-10T09:20:00.000Z",
+    "published": "2026-10-10T09:20:00.000Z",
+    "eventType": "zone.update",
+    "displayMessage": "Update zone",
+    "actor": {
+      "id": "00uALICE01",
+      "type": "User",
+      "alternateId": "alice.admin@example.com",
+      "displayName": "Alice Admin"
+    },
+    "targets": [
+      {
+        "id": "nzoCORP",
+        "type": "NetworkZone",
+        "displayName": "Corp IPs"
+      }
+    ],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {}
+    }
+  },
+  {
+    "uuid": "evt-group.user_membership.add-2026-10-10T10:00:00.000Z",
+    "published": "2026-10-10T10:00:00.000Z",
+    "eventType": "group.user_membership.add",
+    "displayMessage": "Add user to group membership",
+    "actor": {
+      "id": "00uBOB01",
+      "type": "User",
+      "alternateId": "bob.helpdesk@example.com",
+      "displayName": "Bob Helpdesk"
+    },
+    "targets": [
+      {
+        "id": "00uERIN",
+        "type": "User",
+        "alternateId": "erin@example.com",
+        "displayName": "erin@example.com"
+      },
+      {
+        "id": "00gMKTG",
+        "type": "UserGroup",
+        "displayName": "Marketing"
+      }
+    ],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {}
+    }
+  },
+  {
+    "uuid": "evt-application.lifecycle.update-2026-10-10T10:05:00.000Z",
+    "published": "2026-10-10T10:05:00.000Z",
+    "eventType": "application.lifecycle.update",
+    "displayMessage": "Update application",
+    "actor": {
+      "id": "00uBOB01",
+      "type": "User",
+      "alternateId": "bob.helpdesk@example.com",
+      "displayName": "Bob Helpdesk"
+    },
+    "targets": [
+      {
+        "id": "0oaSFDC",
+        "type": "AppInstance",
+        "displayName": "Salesforce"
+      }
+    ],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {}
+    }
+  },
+  {
+    "uuid": "evt-user.account.privilege.grant-2026-10-10T10:30:00.000Z",
+    "published": "2026-10-10T10:30:00.000Z",
+    "eventType": "user.account.privilege.grant",
+    "displayMessage": "Grant user privilege",
+    "actor": {
+      "id": "00uBOB01",
+      "type": "User",
+      "alternateId": "bob.helpdesk@example.com",
+      "displayName": "Bob Helpdesk"
+    },
+    "targets": [
+      {
+        "id": "00uFRANK",
+        "type": "User",
+        "alternateId": "frank@example.com",
+        "displayName": "frank@example.com"
+      }
+    ],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "FAILURE"
+    },
+    "debugContext": {
+      "debugData": {}
+    }
+  },
+  {
+    "uuid": "evt-user.session.start-2026-10-10T11:00:00.000Z",
+    "published": "2026-10-10T11:00:00.000Z",
+    "eventType": "user.session.start",
+    "displayMessage": "User login to Okta",
+    "actor": {
+      "id": "00uBOB01",
+      "type": "User",
+      "alternateId": "bob.helpdesk@example.com",
+      "displayName": "Bob Helpdesk"
+    },
+    "targets": [],
+    "client": {
+      "ipAddress": "203.0.113.10"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {}
+    }
+  }
+]
