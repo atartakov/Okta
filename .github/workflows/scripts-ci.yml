@@ -1,0 +1,39 @@
+name: scripts ci
+
+on:
+  push:
+    branches: [main]
+    paths: ["scripts/**", "lib/**", "tests/**", ".github/workflows/scripts-ci.yml"]
+  pull_request:
+    paths: ["scripts/**", "lib/**", "tests/**", ".github/workflows/scripts-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest -r requirements.txt
+      - run: pytest -q tests
+
+  powershell-parity:
+    # The .ps1 port must print exactly what the Python version prints.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: out_of_band_changes text + markdown parity
+        shell: bash
+        run: |
+          set -e
+          ev=tests/fixtures/system_log_changes.json; dr=tests/fixtures/drift_diff.json
+          python3 scripts/out_of_band_changes.py --input $ev --automation-actor 0oaTERRAFORM01 --drift $dr > py.txt
+          pwsh -NoProfile -File scripts/out_of_band_changes.ps1 -InputFile $ev -AutomationActor 0oaTERRAFORM01 -Drift $dr > ps.txt
+          diff py.txt ps.txt
+          python3 scripts/out_of_band_changes.py --input $ev --automation-actor 0oaTERRAFORM01 --drift $dr --markdown > py.md
+          pwsh -NoProfile -File scripts/out_of_band_changes.ps1 -InputFile $ev -AutomationActor 0oaTERRAFORM01 -Drift $dr -Markdown > ps.md
+          diff py.md ps.md
