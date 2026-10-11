@@ -52,6 +52,54 @@ function New-OktaClient {
     }
 }
 
+function Get-OktaRetryDelay {
+    <#
+    .SYNOPSIS
+        Seconds to sleep after an HTTP 429 from Okta.
+    .DESCRIPTION
+        Okta's x-rate-limit-reset is the Unix time (epoch seconds) when the
+        limit window resets, not a duration. It is measured against the
+        response's Date header (Okta's own clock), falling back to local time.
+        Adds one second of margin, never waits more than 60 seconds, and
+        defaults to 5 seconds when the header is missing.
+    .PARAMETER Headers
+        Response headers (hashtable or HttpResponseHeaders-like dictionary).
+    .PARAMETER Now
+        Optional current Unix time, for tests.
+    #>
+    [CmdletBinding()]
+    param(
+        $Headers,
+        [Nullable[long]]$Now
+    )
+    $maxWait = 60
+    $raw = $null
+    $date = $null
+    if ($Headers) {
+        foreach ($k in @($Headers.Keys)) {
+            if ($k -ieq 'x-rate-limit-reset') { $raw = @($Headers[$k])[0] }
+            elseif ($k -ieq 'date') { $date = @($Headers[$k])[0] }
+        }
+    }
+    $reset = 0.0
+    if (-not $raw -or -not [double]::TryParse([string]$raw, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$reset)) {
+        return 5
+    }
+    $reset = [long][Math]::Truncate($reset)
+    if ($reset -lt 1000000000) {
+        # Not an epoch timestamp: treat a small number as a plain duration.
+        return [int]([Math]::Max(1, [Math]::Min($reset, $maxWait)) + 1)
+    }
+    if ($null -eq $Now) {
+        $Now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $parsed = [DateTimeOffset]::MinValue
+        if ($date -and [DateTimeOffset]::TryParse([string]$date, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal, [ref]$parsed)) {
+            $Now = $parsed.ToUnixTimeSeconds()
+        }
+    }
+    return [int]([Math]::Max(0, [Math]::Min($reset - $Now, $maxWait)) + 1)
+}
+
 function Invoke-OktaRequest {
     <#
     .SYNOPSIS
@@ -101,11 +149,8 @@ function Invoke-OktaRequest {
             throw "Okta request failed: $($_.Exception.Message)"
         }
         if ($resp.StatusCode -eq 429) {
-            $wait = 5
-            $reset = $resp.Headers['x-rate-limit-reset']
-            if ($reset -and ($reset -as [int])) { $wait = [int]$reset }
-            $wait = [Math]::Max(1, [Math]::Min($wait, 60)) + 1
-            Start-Sleep -Seconds $wait
+            # Wait until Okta's rate-limit window resets, then retry.
+            Start-Sleep -Seconds (Get-OktaRetryDelay -Headers $resp.Headers)
             continue
         }
         if ($resp.StatusCode -in 401, 403) {
@@ -276,6 +321,7 @@ function Get-OktaAuthServers {
 }
 
 Export-ModuleMember -Function `
+    Get-OktaRetryDelay,
     Assert-OktaConfig, New-OktaClient, Invoke-OktaRequest, Invoke-OktaPagedGet, `
     Get-OktaUsers, Get-OktaUserByLogin, Get-OktaFactors, Get-OktaLogs, `
     Get-OktaPolicies, Get-OktaPolicyRules, Get-OktaZones, Get-OktaApps, `
