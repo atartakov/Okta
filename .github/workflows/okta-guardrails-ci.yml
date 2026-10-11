@@ -48,12 +48,27 @@ jobs:
           test "$code" -eq 1
       - name: Clean plan must pass
         run: okta-guardrails check --plan fixtures/plan_clean.json --population fixtures/population.json
+      - name: SARIF is valid 2.1.0
+        run: |
+          set +e
+          okta-guardrails check --plan fixtures/plan_risky.json --format sarif --output risky.sarif
+          set -e
+          pip install --quiet jsonschema
+          curl -sSfL https://json.schemastore.org/sarif-2.1.0.json -o sarif-schema.json
+          python -c "import json,jsonschema; d=json.load(open('risky.sarif')); jsonschema.validate(d, json.load(open('sarif-schema.json'))); assert d['runs'][0]['results']; print('SARIF ok:', len(d['runs'][0]['results']), 'results')"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: okta-guardrails-demo-sarif
+          path: okta-guardrails/risky.sarif
 
   terraform:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example: [baseline, live-smoke]
     defaults:
       run:
-        working-directory: okta-guardrails/examples/baseline
+        working-directory: okta-guardrails/examples/${{ matrix.example }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
