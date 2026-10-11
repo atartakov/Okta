@@ -26,6 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: shared client rate-limit handling (PowerShell)
+        shell: bash
+        run: pwsh -NoProfile -File tests/test_okta_client_ps.ps1
       - name: out_of_band_changes text + markdown parity
         shell: bash
         run: |
