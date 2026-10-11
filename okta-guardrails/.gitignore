@@ -1,0 +1,16 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
+build/
+dist/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+plan.bin
+plan.json
+okta-guardrails.md
+report.md
+*.pem
+fixtures/population.json
