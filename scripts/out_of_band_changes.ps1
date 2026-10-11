@@ -144,6 +144,57 @@ function Get-ActorKeys {
     return $keys
 }
 
+$OktaOwned = @('system@okta.com', 'freetrialorgcreator@okta.com')
+
+function Get-ChangeChannel {
+    param($LogEvent)
+    $uri = [string](Get-Prop (Get-Prop (Get-Prop $LogEvent 'debugContext') 'debugData') 'requestUri')
+    $browser = Get-Prop (Get-Prop (Get-Prop $LogEvent 'client') 'userAgent') 'browser'
+    if ($uri.StartsWith('/admin/') -or ($browser -and $browser -ne 'UNKNOWN' -and -not $uri.StartsWith('/api/'))) { return 'Admin Console' }
+    if ($uri.StartsWith('/api/') -or $uri.StartsWith('/oauth2/')) { return 'API' }
+    if ((Get-Prop (Get-Prop $LogEvent 'transaction') 'type') -eq 'JOB') { return 'Okta job' }
+    return 'unknown'
+}
+
+# Some change events (group rules, admin grants) arrive with no targets; the
+# request path still says what was touched. Most specific first.
+$UriTargets = @(
+    @('^/api/v1/groups/rules/([^/?]+)', 'GroupRule'),
+    @('^/api/v1/policies/[^/?]+/rules/([^/?]+)', 'PolicyRule'),
+    @('^/api/v1/policies/([^/?]+)', 'Policy'),
+    @('^/api/v1/groups/(?!rules(?:[/?]|$))([^/?]+)', 'UserGroup'),
+    @('^/api/v1/apps/([^/?]+)', 'AppInstance'),
+    @('^/api/v1/zones/([^/?]+)', 'NetworkZone'),
+    @('^/api/v1/users/([^/?]+)', 'User'),
+    @('^/oauth2/v1/clients/([^/?]+)', 'OAuthClient')
+)
+
+function Get-EventTargets {
+    param($LogEvent)
+    $targets = @(Get-Prop $LogEvent 'targets') | Where-Object { $_ }
+    if ($targets.Count) { return , @($targets) }
+    $uri = [string](Get-Prop (Get-Prop (Get-Prop $LogEvent 'debugContext') 'debugData') 'requestUri')
+    foreach ($pair in $UriTargets) {
+        if ($uri -match $pair[0]) {
+            return , @([pscustomobject]@{ id = $Matches[1]; type = $pair[1]; displayName = $Matches[1] })
+        }
+    }
+    return , @()
+}
+
+function Get-ChangeSummary {
+    param($LogEvent)
+    $text = Get-Prop $LogEvent 'displayMessage'
+    if (-not $text) { $text = Get-Prop $LogEvent 'eventType' }
+    $dbg = Get-Prop (Get-Prop $LogEvent 'debugContext') 'debugData'
+    $granted = Get-Prop $dbg 'privilegeGranted'
+    $revoked = Get-Prop $dbg 'privilegeRevoked'
+    if ($granted) { $text += ": $granted" }
+    elseif ($revoked) { $text += ": $revoked" }
+    if (([string](Get-Prop $dbg 'requestUri')).StartsWith('/api/v1/groups/rules')) { $text += ' (group rule)' }
+    return $text
+}
+
 function Get-ChangeKind {
     param($LogEvent, [string[]]$Automation)
     $actor = Get-Prop $LogEvent 'actor'
@@ -151,7 +202,7 @@ function Get-ChangeKind {
     $debugData = Get-Prop (Get-Prop $LogEvent 'debugContext') 'debugData'
     if (Get-Prop $debugData 'triggeredByGroupRuleId') { return 'automatic' }
     if ((Get-Prop $actor 'type') -eq 'SystemPrincipal' -or
-        ([string](Get-Prop $actor 'alternateId')).ToLower() -eq 'system@okta.com') { return 'automatic' }
+        $OktaOwned -contains ([string](Get-Prop $actor 'alternateId')).ToLower()) { return 'automatic' }
     return 'manual'
 }
 
@@ -160,7 +211,7 @@ function Get-ChangeSeverity {
     $type = Get-Prop $LogEvent 'eventType'
     if ($HighEvents -contains $type) { return 'high' }
     if ($LowEvents -contains $type) {
-        foreach ($t in @(Get-Prop $LogEvent 'targets')) {
+        foreach ($t in (Get-EventTargets $LogEvent)) {
             if ($null -eq $t) { continue }
             if (@('UserGroup', 'AppInstance') -contains (Get-Prop $t 'type') -and
                 ([string](Get-Prop $t 'displayName')) -match "(?i)$Sensitive") { return 'high' }
@@ -179,8 +230,11 @@ function Get-TargetLabel {
 }
 
 function Get-ActorLabel {
+    # Service apps log alternateId 'unknown', so fall back to their name.
     param($Actor)
-    foreach ($k in 'alternateId', 'displayName', 'id') {
+    $alt = Get-Prop $Actor 'alternateId'
+    if ($alt -and ([string]$alt).ToLower() -ne 'unknown') { return [string]$alt }
+    foreach ($k in 'displayName', 'id') {
         $v = Get-Prop $Actor $k
         if ($v) { return [string]$v }
     }
@@ -209,8 +263,10 @@ try {
         Import-Module "$PSScriptRoot/../lib/OktaClient.psm1" -Force
         $client = New-OktaClient
         $filter = ($Prefixes | ForEach-Object { "eventType sw `"$_`"" }) -join ' or '
-        $q = @{ filter = $filter; since = $sinceIso; sortOrder = 'ASCENDING' }
-        if ($Until) { $q['until'] = $Until }
+        # Always bound the window: a System Log query with since and no until
+        # is a polling query whose next link never ends.
+        $untilIso = if ($Until) { $Until } else { [datetime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.000Z") }
+        $q = @{ filter = $filter; since = $sinceIso; until = $untilIso; sortOrder = 'ASCENDING' }
         $events = @(Invoke-OktaPagedGet -Client $client -Path '/api/v1/logs' -Query $q)
     }
 }
@@ -235,14 +291,14 @@ foreach ($ev in $events) {
     $counts[$kind]++
     if ($kind -ne 'manual') { continue }
     $actor = Get-Prop $ev 'actor'
-    $targets = @(Get-Prop $ev 'targets') | Where-Object { $_ }
-    $summary = Get-Prop $ev 'displayMessage'
-    if (-not $summary) { $summary = $type }
+    $targets = Get-EventTargets $ev
+    $summary = Get-ChangeSummary $ev
     $manual += [pscustomobject][ordered]@{
         severity   = Get-ChangeSeverity $ev $SensitiveGroups
         time       = Get-EventTime $ev
         actor      = Get-ActorLabel $actor
         actor_type = Get-Prop $actor 'type'
+        channel    = Get-ChangeChannel $ev
         event_type = $type
         summary    = $summary
         targets    = @($targets | ForEach-Object { Get-TargetLabel $_ })
@@ -267,7 +323,7 @@ if ($Drift) {
     foreach ($ev in $events) {
         if ($AllEvents -notcontains (Get-Prop $ev 'eventType')) { continue }
         $who = Get-ActorLabel (Get-Prop $ev 'actor')
-        foreach ($t in @(Get-Prop $ev 'targets')) {
+        foreach ($t in (Get-EventTargets $ev)) {
             $tid = Get-Prop $t 'id'
             if (-not $tid) { continue }
             if (-not $byTarget.ContainsKey($tid)) { $byTarget[$tid] = @() }
@@ -319,10 +375,10 @@ elseif ($Markdown) {
     $md = @("## Okta changes made outside code ($window)", '',
         "**$($counts['manual']) manual** · $($counts['via code']) via code · $($counts['automatic']) automatic", '')
     if ($manual.Count) {
-        $md += '| Severity | When (UTC) | Who | What | Target |'
-        $md += '|---|---|---|---|---|'
+        $md += '| Severity | When (UTC) | Who | Via | What | Target |'
+        $md += '|---|---|---|---|---|---|'
         foreach ($r in $manual) {
-            $md += "| $($r.severity.ToUpper()) | $($r.time) | $($r.actor) | $($r.summary) | $((@($r.targets) | Select-Object -First 2) -join '; ') |"
+            $md += "| $($r.severity.ToUpper()) | $($r.time) | $($r.actor) | $($r.channel) | $($r.summary) | $((@($r.targets) | Select-Object -First 2) -join '; ') |"
         }
     }
     else { $md += 'No out-of-band changes.' }
@@ -347,7 +403,7 @@ else {
             $tgt = (@($r.targets) | Select-Object -First 3) -join '; '
             $arrow = if ($tgt) { "  -> $tgt" } else { '' }
             $ip = if ($r.ip) { $r.ip } else { '?' }
-            $lines += ("  [{0,-6}] {1}  {2}{3}  (ip {4})" -f $r.severity.ToUpper(), $r.time, $r.summary, $arrow, $ip)
+            $lines += ("  [{0,-6}] {1}  {2}{3}  ({4}, ip {5})" -f $r.severity.ToUpper(), $r.time, $r.summary, $arrow, $r.channel, $ip)
         }
         $lines += ''
     }
