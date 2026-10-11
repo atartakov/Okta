@@ -24,7 +24,9 @@
       "result": "SUCCESS"
     },
     "debugContext": {
-      "debugData": {}
+      "debugData": {
+        "requestUri": "/api/v1/policies/x/rules/y"
+      }
     }
   },
   {
@@ -61,6 +63,9 @@
       "debugData": {
         "triggeredByGroupRuleId": "0prSALESRULE"
       }
+    },
+    "transaction": {
+      "type": "JOB"
     }
   },
   {
@@ -88,13 +93,19 @@
       }
     ],
     "client": {
-      "ipAddress": "203.0.113.10"
+      "ipAddress": "203.0.113.10",
+      "userAgent": {
+        "browser": "CHROME",
+        "rawUserAgent": "Mozilla/5.0"
+      }
     },
     "outcome": {
       "result": "SUCCESS"
     },
     "debugContext": {
-      "debugData": {}
+      "debugData": {
+        "requestUri": "/admin/group/00gOKTAADM/membership"
+      }
     }
   },
   {
@@ -116,13 +127,19 @@
       }
     ],
     "client": {
-      "ipAddress": "203.0.113.10"
+      "ipAddress": "203.0.113.10",
+      "userAgent": {
+        "browser": "CHROME",
+        "rawUserAgent": "Mozilla/5.0"
+      }
     },
     "outcome": {
       "result": "SUCCESS"
     },
     "debugContext": {
-      "debugData": {}
+      "debugData": {
+        "requestUri": "/admin/group/00gOKTAADM/membership"
+      }
     }
   },
   {
@@ -150,13 +167,19 @@
       }
     ],
     "client": {
-      "ipAddress": "203.0.113.10"
+      "ipAddress": "203.0.113.10",
+      "userAgent": {
+        "browser": "UNKNOWN",
+        "rawUserAgent": "curl/8.14.1"
+      }
     },
     "outcome": {
       "result": "SUCCESS"
     },
     "debugContext": {
-      "debugData": {}
+      "debugData": {
+        "requestUri": "/api/v1/apps/0oaSFDC"
+      }
     }
   },
   {
@@ -178,13 +201,19 @@
       }
     ],
     "client": {
-      "ipAddress": "203.0.113.10"
+      "ipAddress": "203.0.113.10",
+      "userAgent": {
+        "browser": "UNKNOWN",
+        "rawUserAgent": "curl/8.14.1"
+      }
     },
     "outcome": {
       "result": "SUCCESS"
     },
     "debugContext": {
-      "debugData": {}
+      "debugData": {
+        "requestUri": "/api/v1/apps/0oaSFDC"
+      }
     }
   },
   {
@@ -207,13 +236,19 @@
       }
     ],
     "client": {
-      "ipAddress": "203.0.113.10"
+      "ipAddress": "203.0.113.10",
+      "userAgent": {
+        "browser": "UNKNOWN",
+        "rawUserAgent": "curl/8.14.1"
+      }
     },
     "outcome": {
       "result": "FAILURE"
     },
     "debugContext": {
-      "debugData": {}
+      "debugData": {
+        "requestUri": "/api/v1/apps/0oaSFDC"
+      }
     }
   },
   {
@@ -229,13 +264,141 @@
     },
     "targets": [],
     "client": {
-      "ipAddress": "203.0.113.10"
+      "ipAddress": "203.0.113.10",
+      "userAgent": {
+        "browser": "UNKNOWN",
+        "rawUserAgent": "curl/8.14.1"
+      }
     },
     "outcome": {
       "result": "SUCCESS"
     },
     "debugContext": {
-      "debugData": {}
+      "debugData": {
+        "requestUri": "/api/v1/apps/0oaSFDC"
+      }
+    }
+  },
+  {
+    "uuid": "evt-svc",
+    "published": "2026-10-10T12:00:00.000Z",
+    "eventType": "group.lifecycle.create",
+    "displayMessage": "Create okta user group",
+    "actor": {
+      "id": "0oaHARKWRITER",
+      "type": "PublicClientAppEntity",
+      "alternateId": "unknown",
+      "displayName": "hark-writer"
+    },
+    "targets": [
+      {
+        "id": "00gNEW",
+        "type": "UserGroup",
+        "displayName": "Test-Group"
+      }
+    ],
+    "client": {
+      "ipAddress": "198.51.100.7",
+      "userAgent": {
+        "browser": "UNKNOWN"
+      }
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {
+        "requestUri": "/api/v1/groups"
+      }
+    },
+    "transaction": {
+      "type": "WEB"
+    }
+  },
+  {
+    "uuid": "evt-trial",
+    "published": "2026-10-04T07:00:00.000Z",
+    "eventType": "application.lifecycle.create",
+    "displayMessage": "Create application",
+    "actor": {
+      "id": "00uTRIAL",
+      "type": "User",
+      "alternateId": "freetrialorgcreator@okta.com",
+      "displayName": "FreeTrial OrgCreator"
+    },
+    "targets": [
+      {
+        "id": "0oaDASH",
+        "type": "AppInstance",
+        "displayName": "Okta Dashboard"
+      }
+    ],
+    "client": {
+      "ipAddress": "10.0.0.1"
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {
+        "requestUri": "/api/internal/orgs"
+      }
+    }
+  },
+  {
+    "uuid": "evt-gr",
+    "published": "2026-10-10T13:00:00.000Z",
+    "eventType": "policy.rule.update",
+    "displayMessage": "Update policy rule",
+    "actor": {
+      "id": "00uBOB01",
+      "type": "User",
+      "alternateId": "bob.helpdesk@example.com",
+      "displayName": "Bob Helpdesk"
+    },
+    "targets": null,
+    "client": {
+      "ipAddress": "203.0.113.10",
+      "userAgent": {
+        "browser": "UNKNOWN"
+      }
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "debugContext": {
+      "debugData": {
+        "requestUri": "/api/v1/groups/rules/0prSALESRULE"
+      }
+    }
+  },
+  {
+    "uuid": "evt-sa",
+    "published": "2026-10-10T13:05:00.000Z",
+    "eventType": "user.account.privilege.grant",
+    "displayMessage": "Grant user privilege",
+    "actor": {
+      "id": "00uALICE01",
+      "type": "User",
+      "alternateId": "alice.admin@example.com",
+      "displayName": "Alice Admin"
+    },
+    "targets": null,
+    "client": {
+      "ipAddress": null,
+      "userAgent": null
+    },
+    "outcome": {
+      "result": "SUCCESS"
+    },
+    "transaction": {
+      "type": null,
+      "id": "unknown"
+    },
+    "debugContext": {
+      "debugData": {
+        "privilegeGranted": "Super administrator"
+      }
     }
   }
 ]
