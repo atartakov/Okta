@@ -1,0 +1,869 @@
+{
+ "format_version": "1.2",
+ "terraform_version": "1.9.8",
+ "prior_state": {
+  "format_version": "1.0",
+  "terraform_version": "1.9.8",
+  "values": {
+   "root_module": {
+    "resources": [
+     {
+      "address": "okta_group.everyone",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "everyone",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00gda2e5dc515b188dca",
+       "name": "Everyone",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.sales",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "sales",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00g8de4e0ea7370e4e60",
+       "name": "Sales",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.sales_ops",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "sales_ops",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00g813b6aa4a3024a59e",
+       "name": "Sales Operations",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.engineering",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "engineering",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00g729bb48d0f86a9e24",
+       "name": "Engineering",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.it",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "it",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00gf415bf7b07a9b2c07",
+       "name": "IT",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.sf_users",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "sf_users",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00g5f1df526931dbe73c",
+       "name": "Salesforce-Users",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.sf_admin",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "sf_admin",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00gf108fcb4f60d2fb16",
+       "name": "Salesforce-Admin",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.aws_prod",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "aws_prod",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00g15505d75aadff620a",
+       "name": "AWS-Prod",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_group.helpdesk",
+      "mode": "managed",
+      "type": "okta_group",
+      "name": "helpdesk",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "00g1b1439f9cafb0a808",
+       "name": "Okta-Helpdesk-Admins",
+       "description": null,
+       "custom_profile_attributes": null,
+       "skip_users": null
+      }
+     },
+     {
+      "address": "okta_app_saml.salesforce",
+      "mode": "managed",
+      "type": "okta_app_saml",
+      "name": "salesforce",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0oaSALESFORCE000001",
+       "label": "Salesforce",
+       "status": "ACTIVE",
+       "authentication_policy": "rstSALESFORCEPOL001"
+      }
+     },
+     {
+      "address": "okta_app_saml.aws",
+      "mode": "managed",
+      "type": "okta_app_saml",
+      "name": "aws",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0oaAWSIDC0000000001",
+       "label": "AWS IAM Identity Center",
+       "status": "ACTIVE"
+      }
+     },
+     {
+      "address": "okta_app_oauth.hr_sync",
+      "mode": "managed",
+      "type": "okta_app_oauth",
+      "name": "hr_sync",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0oaHRSYNC0000000001",
+       "label": "HR Sync",
+       "type": "service",
+       "grant_types": [
+        "client_credentials"
+       ],
+       "response_types": [
+        "token"
+       ],
+       "token_endpoint_auth_method": "private_key_jwt",
+       "redirect_uris": null,
+       "pkce_required": false,
+       "wildcard_redirect": "DISABLED"
+      }
+     },
+     {
+      "address": "okta_app_group_assignment.sf_admin",
+      "mode": "managed",
+      "type": "okta_app_group_assignment",
+      "name": "sf_admin",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "sfadm",
+       "app_id": "0oaSALESFORCE000001",
+       "group_id": "00gf108fcb4f60d2fb16"
+      }
+     },
+     {
+      "address": "okta_app_group_assignment.sf_users",
+      "mode": "managed",
+      "type": "okta_app_group_assignment",
+      "name": "sf_users",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "sfusr",
+       "app_id": "0oaSALESFORCE000001",
+       "group_id": "00g5f1df526931dbe73c"
+      }
+     },
+     {
+      "address": "okta_app_group_assignment.aws_prod",
+      "mode": "managed",
+      "type": "okta_app_group_assignment",
+      "name": "aws_prod",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "awsprd",
+       "app_id": "0oaAWSIDC0000000001",
+       "group_id": "00g15505d75aadff620a"
+      }
+     },
+     {
+      "address": "okta_group_role.helpdesk",
+      "mode": "managed",
+      "type": "okta_group_role",
+      "name": "helpdesk",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "irbHELPDESK",
+       "group_id": "00g1b1439f9cafb0a808",
+       "role_type": "HELP_DESK_ADMIN",
+       "disable_notifications": false
+      }
+     },
+     {
+      "address": "okta_group_rule.sf_users",
+      "mode": "managed",
+      "type": "okta_group_rule",
+      "name": "sf_users",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0prSFUSERS",
+       "name": "Salesforce users",
+       "status": "ACTIVE",
+       "expression_type": "urn:okta:expression:1.0",
+       "expression_value": "user.department == \"Sales\" || user.department == \"Sales Operations\" || user.department == \"Sales Engineering\"",
+       "group_assignments": [
+        "00g5f1df526931dbe73c"
+       ],
+       "users_excluded": [],
+       "remove_assigned_users": false
+      }
+     },
+     {
+      "address": "okta_group_rule.sf_admin",
+      "mode": "managed",
+      "type": "okta_group_rule",
+      "name": "sf_admin",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0prSFADMIN",
+       "name": "Salesforce admins",
+       "status": "ACTIVE",
+       "expression_type": "urn:okta:expression:1.0",
+       "expression_value": "user.department == \"Sales Operations\" && user.title == \"Salesforce Administrator\"",
+       "group_assignments": [
+        "00gf108fcb4f60d2fb16"
+       ],
+       "users_excluded": [],
+       "remove_assigned_users": false
+      }
+     },
+     {
+      "address": "okta_group_rule.aws_prod",
+      "mode": "managed",
+      "type": "okta_group_rule",
+      "name": "aws_prod",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0prAWSPROD",
+       "name": "AWS prod engineers",
+       "status": "ACTIVE",
+       "expression_type": "urn:okta:expression:1.0",
+       "expression_value": "user.department == \"Engineering\" && user.employeeType == \"Employee\"",
+       "group_assignments": [
+        "00g15505d75aadff620a"
+       ],
+       "users_excluded": [],
+       "remove_assigned_users": false
+      }
+     },
+     {
+      "address": "okta_app_oauth_api_scope.hr_sync",
+      "mode": "managed",
+      "type": "okta_app_oauth_api_scope",
+      "name": "hr_sync",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0oaHRSYNC0000000001",
+       "app_id": "0oaHRSYNC0000000001",
+       "issuer": "https://example.okta.com",
+       "scopes": [
+        "okta.users.read",
+        "okta.groups.read"
+       ]
+      }
+     },
+     {
+      "address": "okta_app_signon_policy_rule.salesforce",
+      "mode": "managed",
+      "type": "okta_app_signon_policy_rule",
+      "name": "salesforce",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "rulSF0001",
+       "policy_id": "rstSALESFORCEPOL001",
+       "name": "Salesforce - phishing resistant",
+       "access": "ALLOW",
+       "factor_mode": "2FA",
+       "constraints": [
+        "{\"knowledge\":{\"required\":false},\"possession\":{\"authenticationMethods\":[{\"key\":\"okta_verify\",\"method\":\"signed_nonce\"}],\"phishingResistant\":\"REQUIRED\",\"required\":true}}"
+       ],
+       "re_authentication_frequency": "PT2H",
+       "priority": 1,
+       "status": "ACTIVE"
+      }
+     },
+     {
+      "address": "okta_policy_rule_signon.default",
+      "mode": "managed",
+      "type": "okta_policy_rule_signon",
+      "name": "default",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "0prGLOBAL01",
+       "policy_id": "00pGLOBALSESSION001",
+       "name": "Default session",
+       "access": "ALLOW",
+       "session_lifetime": 720,
+       "session_idle": 120,
+       "session_persistent": false,
+       "mfa_required": true
+      }
+     },
+     {
+      "address": "okta_network_zone.block_anonymizers",
+      "mode": "managed",
+      "type": "okta_network_zone",
+      "name": "block_anonymizers",
+      "provider_name": "registry.terraform.io/okta/okta",
+      "schema_version": 0,
+      "values": {
+       "id": "nzoBLOCK01",
+       "name": "Block anonymizers",
+       "type": "DYNAMIC_V2",
+       "usage": "BLOCKLIST",
+       "status": "ACTIVE"
+      }
+     }
+    ]
+   }
+  }
+ },
+ "resource_changes": [
+  {
+   "address": "okta_group_rule.sf_admin",
+   "mode": "managed",
+   "type": "okta_group_rule",
+   "name": "sf_admin",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "update"
+    ],
+    "before": {
+     "id": "0prSFADMIN",
+     "name": "Salesforce admins",
+     "status": "ACTIVE",
+     "expression_type": "urn:okta:expression:1.0",
+     "expression_value": "user.department == \"Sales Operations\" && user.title == \"Salesforce Administrator\"",
+     "group_assignments": [
+      "00gf108fcb4f60d2fb16"
+     ],
+     "users_excluded": [],
+     "remove_assigned_users": false
+    },
+    "after": {
+     "id": "0prSFADMIN",
+     "name": "Salesforce admins",
+     "status": "ACTIVE",
+     "expression_type": "urn:okta:expression:1.0",
+     "expression_value": "String.stringContains(user.department, \"Sales\")",
+     "group_assignments": [
+      "00gf108fcb4f60d2fb16"
+     ],
+     "users_excluded": [],
+     "remove_assigned_users": false
+    },
+    "after_unknown": {},
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_group_rule.aws_prod",
+   "mode": "managed",
+   "type": "okta_group_rule",
+   "name": "aws_prod",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "update"
+    ],
+    "before": {
+     "id": "0prAWSPROD",
+     "name": "AWS prod engineers",
+     "status": "ACTIVE",
+     "expression_type": "urn:okta:expression:1.0",
+     "expression_value": "user.department == \"Engineering\" && user.employeeType == \"Employee\"",
+     "group_assignments": [
+      "00g15505d75aadff620a"
+     ],
+     "users_excluded": [],
+     "remove_assigned_users": false
+    },
+    "after": {
+     "id": "0prAWSPROD",
+     "name": "AWS prod engineers",
+     "status": "ACTIVE",
+     "expression_type": "urn:okta:expression:1.0",
+     "expression_value": "user.department == \"Engineering\" && user.employeeType == \"Employee\" && user.costCenter == \"CC-100\"",
+     "group_assignments": [
+      "00g15505d75aadff620a"
+     ],
+     "users_excluded": [],
+     "remove_assigned_users": false
+    },
+    "after_unknown": {},
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_group_role.helpdesk_super",
+   "mode": "managed",
+   "type": "okta_group_role",
+   "name": "helpdesk_super",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "create"
+    ],
+    "before": null,
+    "after": {
+     "group_id": "00g1b1439f9cafb0a808",
+     "role_type": "SUPER_ADMIN",
+     "disable_notifications": true,
+     "resource_set_id": null,
+     "role_id": null,
+     "target_app_list": null,
+     "target_group_list": null
+    },
+    "after_unknown": {
+     "id": true
+    },
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_group_rule.it_helpdesk",
+   "mode": "managed",
+   "type": "okta_group_rule",
+   "name": "it_helpdesk",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "create"
+    ],
+    "before": null,
+    "after": {
+     "id": null,
+     "name": "IT to helpdesk admins",
+     "status": "ACTIVE",
+     "expression_type": "urn:okta:expression:1.0",
+     "expression_value": "user.department == \"IT\"",
+     "group_assignments": [
+      "00g1b1439f9cafb0a808"
+     ],
+     "users_excluded": [],
+     "remove_assigned_users": false
+    },
+    "after_unknown": {
+     "id": true
+    },
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_group.sales_leadership",
+   "mode": "managed",
+   "type": "okta_group",
+   "name": "sales_leadership",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "create"
+    ],
+    "before": null,
+    "after": {
+     "name": "Sales-Leadership",
+     "description": "VPs and directors",
+     "custom_profile_attributes": null,
+     "skip_users": null
+    },
+    "after_unknown": {
+     "id": true
+    },
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_group_rule.sales_leadership",
+   "mode": "managed",
+   "type": "okta_group_rule",
+   "name": "sales_leadership",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "create"
+    ],
+    "before": null,
+    "after": {
+     "id": null,
+     "name": "Sales leadership",
+     "status": "ACTIVE",
+     "expression_type": "urn:okta:expression:1.0",
+     "expression_value": "user.title == \"VP Sales\" || user.title == \"Director, Sales\"",
+     "group_assignments": [
+      null
+     ],
+     "users_excluded": [],
+     "remove_assigned_users": false
+    },
+    "after_unknown": {
+     "id": true,
+     "group_assignments": [
+      true
+     ]
+    },
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_app_oauth.partner_portal",
+   "mode": "managed",
+   "type": "okta_app_oauth",
+   "name": "partner_portal",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "create"
+    ],
+    "before": null,
+    "after": {
+     "label": "Partner Portal",
+     "type": "browser",
+     "grant_types": [
+      "authorization_code",
+      "implicit"
+     ],
+     "response_types": [
+      "code",
+      "token",
+      "id_token"
+     ],
+     "pkce_required": false,
+     "redirect_uris": [
+      "https://*.partners.example.com/callback",
+      "http://portal.partners.example.com/cb"
+     ],
+     "post_logout_redirect_uris": [
+      "https://partners.example.com"
+     ],
+     "wildcard_redirect": "SUBDOMAIN",
+     "token_endpoint_auth_method": "none",
+     "status": "ACTIVE"
+    },
+    "after_unknown": {
+     "id": true,
+     "client_id": true
+    },
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_app_oauth_api_scope.hr_sync",
+   "mode": "managed",
+   "type": "okta_app_oauth_api_scope",
+   "name": "hr_sync",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "update"
+    ],
+    "before": {
+     "id": "0oaHRSYNC0000000001",
+     "app_id": "0oaHRSYNC0000000001",
+     "issuer": "https://example.okta.com",
+     "scopes": [
+      "okta.users.read",
+      "okta.groups.read"
+     ]
+    },
+    "after": {
+     "id": "0oaHRSYNC0000000001",
+     "app_id": "0oaHRSYNC0000000001",
+     "issuer": "https://example.okta.com",
+     "scopes": [
+      "okta.users.read",
+      "okta.groups.read",
+      "okta.users.manage",
+      "okta.roles.manage"
+     ]
+    },
+    "after_unknown": {},
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_app_oauth.bi_export",
+   "mode": "managed",
+   "type": "okta_app_oauth",
+   "name": "bi_export",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "create"
+    ],
+    "before": null,
+    "after": {
+     "label": "BI Export",
+     "type": "service",
+     "grant_types": [
+      "client_credentials"
+     ],
+     "response_types": [
+      "token"
+     ],
+     "token_endpoint_auth_method": "client_secret_basic",
+     "redirect_uris": null,
+     "pkce_required": false,
+     "wildcard_redirect": "DISABLED",
+     "status": "ACTIVE"
+    },
+    "after_unknown": {
+     "id": true,
+     "client_id": true,
+     "client_secret": true
+    },
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_app_signon_policy_rule.salesforce",
+   "mode": "managed",
+   "type": "okta_app_signon_policy_rule",
+   "name": "salesforce",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "update"
+    ],
+    "before": {
+     "id": "rulSF0001",
+     "policy_id": "rstSALESFORCEPOL001",
+     "name": "Salesforce - phishing resistant",
+     "access": "ALLOW",
+     "factor_mode": "2FA",
+     "constraints": [
+      "{\"knowledge\":{\"required\":false},\"possession\":{\"authenticationMethods\":[{\"key\":\"okta_verify\",\"method\":\"signed_nonce\"}],\"phishingResistant\":\"REQUIRED\",\"required\":true}}"
+     ],
+     "re_authentication_frequency": "PT2H",
+     "priority": 1,
+     "status": "ACTIVE"
+    },
+    "after": {
+     "id": "rulSF0001",
+     "policy_id": "rstSALESFORCEPOL001",
+     "name": "Salesforce - phishing resistant",
+     "access": "ALLOW",
+     "factor_mode": "1FA",
+     "constraints": [
+      "{\"possession\":{\"required\":true}}"
+     ],
+     "re_authentication_frequency": "PT720H",
+     "priority": 1,
+     "status": "ACTIVE"
+    },
+    "after_unknown": {},
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_policy_rule_signon.default",
+   "mode": "managed",
+   "type": "okta_policy_rule_signon",
+   "name": "default",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "update"
+    ],
+    "before": {
+     "id": "0prGLOBAL01",
+     "policy_id": "00pGLOBALSESSION001",
+     "name": "Default session",
+     "access": "ALLOW",
+     "session_lifetime": 720,
+     "session_idle": 120,
+     "session_persistent": false,
+     "mfa_required": true
+    },
+    "after": {
+     "id": "0prGLOBAL01",
+     "policy_id": "00pGLOBALSESSION001",
+     "name": "Default session",
+     "access": "ALLOW",
+     "session_lifetime": 10080,
+     "session_idle": 120,
+     "session_persistent": true,
+     "mfa_required": true
+    },
+    "after_unknown": {},
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  },
+  {
+   "address": "okta_network_zone.block_anonymizers",
+   "mode": "managed",
+   "type": "okta_network_zone",
+   "name": "block_anonymizers",
+   "provider_name": "registry.terraform.io/okta/okta",
+   "change": {
+    "actions": [
+     "delete"
+    ],
+    "before": {
+     "id": "nzoBLOCK01",
+     "name": "Block anonymizers",
+     "type": "DYNAMIC_V2",
+     "usage": "BLOCKLIST",
+     "status": "ACTIVE"
+    },
+    "after": null,
+    "after_unknown": {},
+    "before_sensitive": {},
+    "after_sensitive": {}
+   }
+  }
+ ],
+ "configuration": {
+  "provider_config": {
+   "okta": {
+    "name": "okta",
+    "full_name": "registry.terraform.io/okta/okta"
+   }
+  },
+  "root_module": {
+   "resources": [
+    {
+     "address": "okta_group_rule.sales_leadership",
+     "mode": "managed",
+     "type": "okta_group_rule",
+     "name": "sales_leadership",
+     "provider_config_key": "okta",
+     "expressions": {
+      "group_assignments": {
+       "references": [
+        "okta_group.sales_leadership.id",
+        "okta_group.sales_leadership"
+       ]
+      },
+      "expression_value": {
+       "constant_value": "user.title == \"VP Sales\" || user.title == \"Director, Sales\""
+      }
+     },
+     "schema_version": 0
+    },
+    {
+     "address": "okta_group_rule.it_helpdesk",
+     "mode": "managed",
+     "type": "okta_group_rule",
+     "name": "it_helpdesk",
+     "provider_config_key": "okta",
+     "expressions": {
+      "group_assignments": {
+       "references": [
+        "okta_group.helpdesk.id",
+        "okta_group.helpdesk"
+       ]
+      }
+     },
+     "schema_version": 0
+    },
+    {
+     "address": "okta_group_role.helpdesk_super",
+     "mode": "managed",
+     "type": "okta_group_role",
+     "name": "helpdesk_super",
+     "provider_config_key": "okta",
+     "expressions": {
+      "group_id": {
+       "references": [
+        "okta_group.helpdesk.id",
+        "okta_group.helpdesk"
+       ]
+      }
+     },
+     "schema_version": 0
+    },
+    {
+     "address": "okta_app_oauth_api_scope.hr_sync",
+     "mode": "managed",
+     "type": "okta_app_oauth_api_scope",
+     "name": "hr_sync",
+     "provider_config_key": "okta",
+     "expressions": {
+      "app_id": {
+       "references": [
+        "okta_app_oauth.hr_sync.id",
+        "okta_app_oauth.hr_sync"
+       ]
+      }
+     },
+     "schema_version": 0
+    }
+   ]
+  }
+ },
+ "_comment": "Hand-built demo plan in Terraform JSON plan format. Synthetic data only."
+}
