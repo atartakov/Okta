@@ -1,0 +1,57 @@
+# Plans okta-guardrails/examples/baseline against a real Okta developer tenant and runs the
+# guardrails on the result. Off until the repo has these secrets in an
+# environment called "okta-dev":
+#   OKTA_ORG_NAME, OKTA_CLIENT_ID, OKTA_PRIVATE_KEY_ID, OKTA_PRIVATE_KEY
+# Plan only. Nothing here applies changes.
+name: okta-guardrails plan
+
+on:
+  pull_request:
+    paths: ["okta-guardrails/examples/baseline/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    environment: okta-dev
+    env:
+      TF_VAR_okta_org_name: ${{ secrets.OKTA_ORG_NAME }}
+      TF_VAR_okta_client_id: ${{ secrets.OKTA_CLIENT_ID }}
+      TF_VAR_okta_private_key_id: ${{ secrets.OKTA_PRIVATE_KEY_ID }}
+      TF_VAR_okta_private_key: ${{ secrets.OKTA_PRIVATE_KEY }}
+    steps:
+      - name: Skip when the tenant is not configured
+        id: gate
+        run: |
+          if [ -z "$TF_VAR_okta_org_name" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "okta-dev secrets not set; skipping." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.enabled == 'true'
+      - uses: hashicorp/setup-terraform@v3
+        if: steps.gate.outputs.enabled == 'true'
+        with:
+          terraform_version: "1.9.8"
+          terraform_wrapper: false
+      - name: terraform plan
+        if: steps.gate.outputs.enabled == 'true'
+        working-directory: okta-guardrails/examples/baseline
+        run: |
+          terraform init -input=false
+          terraform plan -input=false -lock=false -out=plan.bin
+          terraform show -json plan.bin > plan.json
+      - name: Synthetic population
+        if: steps.gate.outputs.enabled == 'true'
+        run: python3 okta-guardrails/scripts/gen_population.py > population.json
+      - uses: ./okta-guardrails
+        if: steps.gate.outputs.enabled == 'true'
+        with:
+          plan: okta-guardrails/examples/baseline/plan.json
+          population: population.json
