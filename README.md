@@ -1,4 +1,4 @@
-# okta-ideas
+# okta
 
 Okta / IAM automation scripts and tooling. Each script is standalone and
 solves one real problem; all of them share one client module so auth,
